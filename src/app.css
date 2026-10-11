@@ -1,0 +1,50 @@
+:root {
+  --verde-900: #0B3527;
+  --verde-700: #0D4F3C;
+  --verde-600: #146B50;
+  --verde-500: #1B8A63;
+  --verde-100: #E2EEE8;
+  --verde-50: #F0F5F2;
+  --agua: #0A7EA4;
+  --tinta: #17231E;
+  --tinta-suave: #5B6762;
+  --linea: #E0E5E2;
+  --fondo: #F1F3F2;
+  --alerta: #B4410C;
+  --sombra: 0 1px 2px rgb(23 35 30 / 0.06), 0 2px 8px rgb(23 35 30 / 0.05);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body {
+  overflow: hidden; display: flow-root;
+  background: #E7ECE9; color: var(--tinta);
+  font-family: 'Source Sans 3', system-ui, 'Segoe UI', sans-serif; font-size: 17px; line-height: 1.4; font-feature-settings: 'tnum';
+  -webkit-font-smoothing: antialiased;
+}
+button, input, select { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--agua); outline-offset: 2px; }
+
+/* Botón principal: sólido, con un degradado apenas perceptible. --c define el color. */
+.boton {
+  --c: var(--verde-600);
+  position: relative; overflow: hidden; isolation: isolate; cursor: pointer;
+  border: 0; border-radius: 10px; color: #fff; font-weight: 600;
+  background: var(--c);
+  box-shadow: 0 1px 2px rgb(23 35 30 / 0.15);
+}
+.boton:active:not(:disabled) { transform: translateY(1px); }
+.boton:disabled { cursor: default; opacity: 0.45; box-shadow: none; }
+.boton.secundario {
+  color: var(--verde-700); background: #fff; border: 1.5px solid var(--linea); box-shadow: none;
+}
+
+.tarjeta {
+  position: relative; overflow: hidden; isolation: isolate;
+  background: #fff; border: 1px solid var(--linea); border-radius: 12px; box-shadow: var(--sombra);
+}
+/* Franja de color arriba, como en los mockups. */
+.franja::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 5px; background: var(--banda, var(--verde-600));
+}
+

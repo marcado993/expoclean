@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "targets": {
+    "#kiosko": {
+      "targetKind": "existing-ui",
+      "projectId": "433e105c-d5b0-4e2c-b7c0-b1050129f2b6",
+      "baselineDraftId": "ded55ce0-231b-4a6b-92be-6838d6af1d06",
+      "activeDraftId": "ad72ea53-4450-4b5f-af7c-ef315f3df295",
+      "designSystemPath": ".superdesign/design-system.md",
+      "referenceIds": [
+        "src-assets-logo.svg"
+      ],
+      "brandAssets": {
+        "logo": {
+          "assetKey": "src-assets-logo.svg",
+          "url": "https://vgbujcuwptvheqijyjbe.supabase.co/storage/v1/object/public/hmac-uploads/projects/433e105c-d5b0-4e2c-b7c0-b1050129f2b6/brand-assets/src-assets-logo.svg/logo.svg",
+          "sourcePath": "src/assets/logo.svg"
+        }
+      },
+      "contextFiles": [
+        ".superdesign/design-system.md",
+        "src/App.svelte",
+        "src/views/Kiosko.svelte",
+        "src/components/Icono.svelte",
+        "src/lib/iconos.js",
+        "src/components/Recipiente.svelte",
+        "src/components/Logo.svelte",
+        "src/components/Orbe.svelte",
+        "src/app.css",
+        "src/lib/ui.js",
+        "src/lib/store.svelte.js"
+      ],
+      "fingerprints": {
+        ".superdesign/design-system.md": "4a8a95b11b1ccafec1eed7b466269b7b0ebc56fb8bf166472557f1078ad79175",
+        "src/App.svelte": "01632798938fe249aa19a021efcfcc3a5049573db7a93f8dbb28bd1ff4b75426",
+        "src/views/Kiosko.svelte": "6a585b4f96f55be510a8cf45239c07bf9bcaa6aee75b7252edc0868af3cf14aa",
+        "src/components/Icono.svelte": "cfdd5302b15851779a4dbfd8a55ff7ae99cdb1cd548c8c7a656f6a8e299ef0d3",
+        "src/lib/iconos.js": "bc3112931df2d83dcc771660a9669d7241c4966d993833825da90688d13a10f2",
+        "src/components/Recipiente.svelte": "4cc8204f6cc01c4472993ac1b06d335520d4867682e6b99df0333b4937562638",
+        "src/components/Logo.svelte": "6d8563eeccc51afb2c4bb5e72aad68f4f4ac1b73c4c4087eca160369fac778ac",
+        "src/components/Orbe.svelte": "dee3e535a552e328fa7bd1c011d1134078acf2ce9a76d65b71fd594b713b0bbb",
+        "src/app.css": "edb0ae108d681f39bf2ced3d3a50ea2349ef0a5c26d364b03cda3e9079b15435",
+        "src/lib/ui.js": "3bd897b021bfc29d727df783f5a10b8e60e55177c02afdecb6c840d1fd896d00",
+        "src/lib/store.svelte.js": "36aed1935be27c159da77d1fdf39e72bed8bd2f4bd2929329ede1cd0ea0006c2"
+      },
+      "components": [
+        {
+          "name": "KioskHeader",
+          "id": "9577c9f1-9b8d-4d5a-97af-80e7383ae044",
+          "sourcePath": "src/App.svelte",
+          "logoAssetKey": "src-assets-logo.svg"
+        }
+      ],
+      "drafts": {
+        "ded55ce0-231b-4a6b-92be-6838d6af1d06": {
+          "title": "Kiosko — actual (reproducción)",
+          "visualDirection": "baseline: single list, container icon + name",
+          "currentVersion": 1
+        },
+        "e0e31b6f-405a-487d-8cde-d3b0c4d1ae68": {
+          "title": "A — Agrupado por recipiente",
+          "visualDirection": "sections Balde/Botella/Chisguete with colored headers, name-only rows",
+          "parentDraftId": "ded55ce0-231b-4a6b-92be-6838d6af1d06",
+          "currentVersion": 1
+        },
+        "ad72ea53-4450-4b5f-af7c-ef315f3df295": {
+          "title": "Combinado — Hoy te toca + otros por color",
+          "visualDirection": "3 assigned big buttons with status (Listo / Falta 1) + '1 de 3 listos', other places grouped by container color in 2-col grid",
+          "parentDraftId": "ded55ce0-231b-4a6b-92be-6838d6af1d06",
+          "currentVersion": 4
+        }
+      },
+      "updatedAt": "2026-10-11T15:19:45.718757+00:00"
+    }
+  }
+}
