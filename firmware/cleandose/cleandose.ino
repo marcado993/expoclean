@@ -96,10 +96,15 @@ void conectarWifi() {
   }
   digitalWrite(PIN_LED, LOW);
   if (WiFi.status() == WL_CONNECTED) {
-    Serial.print(" listo. IP ");
-    Serial.println(WiFi.localIP());
+    Serial.println();
+    Serial.print("[OK] WIFI CONECTADO. IP ");
+    Serial.print(WiFi.localIP());
+    Serial.print(", señal ");
+    Serial.print(WiFi.RSSI());
+    Serial.println(" dBm");
   } else {
-    Serial.println(" NO conecta.");
+    Serial.println();
+    Serial.println("[ERROR] WIFI NO CONECTA.");
     parpadear(2, 700);
     diagnosticarWifi();
   }
@@ -109,19 +114,26 @@ void conectarWifi() {
 void resultadoServidor(int codigo) {
   bool ok = codigo == 200 || codigo == 204;
   if (ok && !enLinea) {
-    Serial.print("Conectado al servidor ");
-    Serial.print(SERVIDOR);
-    Serial.println(". La app ya ve la máquina.");
+    Serial.println("==============================================");
+    Serial.println("[OK] CONECTADO AL SERVIDOR CLEANDOSE");
+    Serial.print("     ");
+    Serial.println(SERVIDOR);
+    Serial.println("     La app ya ve la maquina. Toca un lugar en la app.");
+    Serial.println("==============================================");
     parpadear(4, 150);                       // las 4 luces de "conectado"
+  } else if (ok) {
+    Serial.print("[OK] CONECTADO, esperando ordenes de la app (señal ");
+    Serial.print(WiFi.RSSI());
+    Serial.println(" dBm)");
   }
   if (!ok) {
     if (codigo == 401) {
-      Serial.println("El servidor rechazó el TOKEN: debe ser igual a CLEANDOSE_TOKEN del servidor.");
+      Serial.println("[ERROR] El servidor rechazo el TOKEN: debe ser igual a CLEANDOSE_TOKEN del servidor.");
       parpadear(3, 700);
     } else {
-      Serial.print("No llego al servidor (código ");
+      Serial.print("[ERROR] No llego al servidor (codigo ");
       Serial.print(codigo);
-      Serial.println("). ¿Este Wi-Fi tiene internet y no pide inicio de sesión?");
+      Serial.println("). Este Wi-Fi tiene internet? Pide inicio de sesion?");
       parpadear(5, 120);
     }
   }
@@ -151,7 +163,7 @@ void dosificar(const String& id, int compartimento, long segundos) {
   }
   ultimaId = id;
   avisar(id, "dosificando");
-  Serial.print("Bomba ");
+  Serial.print("[ORDEN] Bomba ");
   Serial.print(compartimento);
   Serial.print(" ON por ");
   Serial.print(segundos);
@@ -160,7 +172,7 @@ void dosificar(const String& id, int compartimento, long segundos) {
   unsigned long fin = millis() + segundos * 1000UL;
   while ((long)(fin - millis()) > 0) delay(20);   // la bomba se apaga aunque se caiga el Wi-Fi
   bomba(compartimento - 1, false);
-  Serial.println("Bomba OFF");
+  Serial.println("[ORDEN] Bomba OFF, dosis terminada");
 
   for (int intento = 0; intento < 5 && !avisar(id, "hecha"); intento++) delay(1000);
 }
@@ -175,7 +187,7 @@ void setup() {
   pinMode(PIN_LED, OUTPUT);
   delay(500);
   Serial.println();
-  Serial.println("CleanDose: arrancando");
+  Serial.println("[INICIO] CleanDose arrancando. Rele apagado.");
   WiFi.mode(WIFI_STA);
   WiFi.setSleep(false);
   WiFi.setAutoReconnect(true);
