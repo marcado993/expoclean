@@ -169,7 +169,7 @@
         {@const deHoy = (db.hoy ?? []).includes(a.id)}
         <div class="fila-caja" style="height:{ALTO_FILA}px">
         <button class="fila" onclick={() => abrir(a)}>
-          <span class="azulejo"><Icono nombre={a.superficie} size={24} trazo={1.5} /></span>
+          <span class="azulejo" style="--c:{ZONAS[zonaDe(a)].color}; --t:{ZONAS[zonaDe(a)].tinta}"><Icono nombre={a.superficie} size={24} trazo={1.8} /></span>
           <span class="dato"><strong>{a.nombre}</strong><span>{resumen(a)}</span></span>
           {#if a.croquis}<span class="etiqueta-mapa" title="Dibujado en el croquis"><Icono nombre="mapa" size={16} /></span>{/if}
           <span class="chevron"><Icono nombre="derecha" size={20} /></span>
@@ -352,7 +352,7 @@
 <style>
   .lugares { position: relative; height: 100%; display: flex; flex-direction: column; gap: 10px; }
 
-  .pestañas { flex: none; display: grid; grid-template-columns: 1fr 1fr; padding: 4px; border-radius: 14px; background: #e3ebe6; }
+  .pestañas { flex: none; display: grid; grid-template-columns: 1fr 1fr; padding: 4px; border-radius: 12px; background: #DFE5E8; }
   .pestañas button {
     display: flex; align-items: center; justify-content: center; gap: 6px; height: 42px; border: 0; border-radius: 10px;
     background: none; cursor: pointer; font-weight: 700; color: var(--tinta-suave);
@@ -380,11 +380,11 @@
     border: 0; border-bottom: 1px solid var(--linea); background: none; cursor: pointer; text-align: left;
   }
   .dato { position: relative; flex: 1; min-width: 0; display: flex; flex-direction: column; }
-  .dato strong { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .dato strong { font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .dato span { font-size: 0.82rem; color: var(--tinta-suave); }
   .azulejo {
-    flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 8px;
-    background: var(--verde-50); color: var(--verde-700);
+    flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 10px;
+    background: var(--c); color: var(--t);
   }
   .etiqueta-mapa { color: var(--agua); display: grid; }
   .chevron { color: #9fb0a8; flex: none; }
@@ -417,7 +417,7 @@
   }
   .hoja.chica { inset: auto 0 0 0; container-type: normal; }
   .hoja-cabeza { flex: none; display: flex; align-items: center; justify-content: space-between; }
-  h2 { margin: 0; font-size: 1.2rem; font-weight: 800; color: var(--verde-900); }
+  h2 { margin: 0; font-size: 1.35rem; font-weight: 800; letter-spacing: -0.015em; color: var(--tinta); }
   .cerrar { width: 40px; height: 40px; border: 0; border-radius: 10px; background: var(--verde-50); display: grid; place-items: center; cursor: pointer; }
 
   .describir { flex: none; display: flex; align-items: center; gap: 6px; padding: 4px 4px 4px 12px; border-radius: 12px; background: var(--verde-50); border: 1.5px dashed #a9cdb8; }

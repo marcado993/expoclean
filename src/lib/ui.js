@@ -14,7 +14,7 @@ export const CATEGORIAS = {
  */
 export const ZONAS = {
   sanitario: { nombre: 'Sanitarios', color: '#C62828', palabra: 'rojo', tinta: '#fff' },          // inodoros, urinarios, piso del baño
-  lavabo:    { nombre: 'Lavamanos y espejos', color: '#B88600', palabra: 'amarillo', tinta: '#fff' }, // amarillo: superficies del baño
+  lavabo:    { nombre: 'Lavamanos y espejos', color: '#F2B705', palabra: 'amarillo', tinta: '#14202B' }, // amarillo de seguridad: lleva texto oscuro
   general:   { nombre: 'Áreas generales', color: '#1D6FB8', palabra: 'azul', tinta: '#fff' },     // oficinas, pasillos, vidrios
   cocina:    { nombre: 'Cocina y comedor', color: '#2E7D32', palabra: 'verde', tinta: '#fff' },    // donde hay alimentos
 };

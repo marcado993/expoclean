@@ -2,7 +2,7 @@
   import Icono from '../components/Icono.svelte';
   // Evidencia para el Reto 4: cuánta agua y producto se ahorra frente a llenar "a ojo". Sin scroll.
   import { db, reiniciar } from '../lib/store.svelte.js';
-  import { leerEcoloop } from '../lib/smartdose.js';
+  import { leerEcoloop, probarMotor, activarRele, Ocupado } from '../lib/smartdose.js';
   import Ficha from '../components/Ficha.svelte';
   import Recipiente from '../components/Recipiente.svelte';
 
@@ -24,6 +24,37 @@
       errorEco = `No hay respuesta del ESP32 en ${db.dispositivo.ip}. Revisa que esté encendido y en la misma red.`;
     }
   }
+
+  let motor = $state('');
+  async function moverMotor() {
+    motor = 'Moviendo…';
+    try {
+      await probarMotor(db.dispositivo);
+      motor = 'El motor respondió';
+    } catch {
+      motor = `No hay respuesta del ESP32 en ${db.dispositivo.ip}`;
+    }
+  }
+
+  // El ESP32 apaga el relé solo; la cuenta aquí es solo para mostrarla.
+  const RELE_SEG = 30;
+  let releResta = $state(0);
+  let releError = $state('');
+  let reloj;
+  async function alternarRele() {
+    releError = '';
+    const prender = releResta === 0;
+    try {
+      await activarRele(db.dispositivo, prender ? RELE_SEG : 0);
+    } catch (e) {
+      releError = e instanceof Ocupado ? `Ocupado: está llenando (faltan ${Math.ceil(e.restaMs / 1000)} s)` : `No hay respuesta del ESP32 en ${db.dispositivo.ip}`;
+      return;
+    }
+    clearInterval(reloj);
+    releResta = prender ? RELE_SEG : 0;
+    if (prender) reloj = setInterval(() => (releResta = Math.max(0, releResta - 1)) || clearInterval(reloj), 1000);
+  }
+  $effect(() => () => clearInterval(reloj));
 </script>
 
 <div class="impacto">
@@ -81,6 +112,17 @@
       <label class="campo">Dirección IP del ESP32
         <input bind:value={db.dispositivo.ip} disabled={db.dispositivo.simular} />
       </label>
+      <div class="prueba">
+        <button class="boton chico" style="--c:var(--agua)" disabled={db.dispositivo.simular || motor === 'Moviendo…'}
+          onclick={moverMotor}>Probar motor</button>
+        <small>{db.dispositivo.simular ? 'Desactiva el modo demostración para probarlo' : motor}</small>
+      </div>
+      <div class="prueba">
+        <button class="boton chico" style="--c:{releResta ? 'var(--alerta)' : 'var(--verde-600)'}" onclick={alternarRele}>
+          {releResta ? 'Apagar relé' : `Prender relé ${RELE_SEG} s`}
+        </button>
+        <small>{releError || (releResta ? `Encendido, se apaga en ${releResta} s` : '')}</small>
+      </div>
       <label class="interruptor">
         <input type="checkbox" bind:checked={db.voz} />
         <span class="riel"></span>
@@ -104,7 +146,7 @@
   .tanque { width: 74px; }
   .eco-dato { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
   .eco-titulo { font-size: 0.85rem; font-weight: 600; color: var(--tinta-suave); }
-  .eco-valor { font-size: 1.9rem; font-weight: 700; color: var(--agua); line-height: 1.1; letter-spacing: -0.01em; }
+  .eco-valor { font-size: 2rem; font-weight: 800; color: var(--agua-oscura); line-height: 1.1; letter-spacing: -0.01em; }
   .campo-linea { display: flex; align-items: center; gap: 8px; font-size: 0.82rem; font-weight: 600; color: var(--tinta-suave); }
   .campo-linea input { width: 90px; height: 36px; padding: 0 10px; border-radius: 8px; border: 1.5px solid var(--linea); font-weight: 600; }
   .chico { height: 38px; padding: 0 14px; font-size: 0.9rem; align-self: flex-start; }
@@ -117,11 +159,14 @@
     background: #fff; border-radius: 18px; border: 1px solid var(--linea); box-shadow: 0 20px 40px rgb(10 59 42 / 0.2);
   }
   .hoja-cabeza { display: flex; align-items: center; justify-content: space-between; }
-  h2 { margin: 0; font-size: 1.2rem; font-weight: 700; color: var(--verde-900); }
+  h2 { margin: 0; font-size: 1.35rem; font-weight: 800; letter-spacing: -0.015em; color: var(--tinta); }
   .cerrar { width: 40px; height: 40px; border: 0; border-radius: 10px; background: var(--verde-50); display: grid; place-items: center; cursor: pointer; }
   .campo { display: flex; flex-direction: column; gap: 4px; font-weight: 600; font-size: 0.82rem; color: var(--tinta-suave); }
   .campo input { height: 44px; padding: 0 12px; border-radius: 10px; border: 1.5px solid var(--linea); font-size: 1rem; color: var(--tinta); }
   .campo input:disabled { background: var(--fondo); color: var(--tinta-suave); }
+  .prueba { display: flex; align-items: center; gap: 12px; }
+  .prueba .chico { flex: none; align-self: auto; white-space: nowrap; }
+  .prueba small { color: var(--tinta-suave); font-size: 0.8rem; font-weight: 600; }
   .reiniciar { margin-top: auto; height: 48px; color: var(--alerta); }
 
   .interruptor { display: flex; align-items: center; gap: 12px; cursor: pointer; }

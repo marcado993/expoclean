@@ -1,50 +1,88 @@
+/* SmartDose — estación dispensadora de cuarto de limpieza.
+   Lo único con color fuerte son las TECLAS de zona (código de colores de la industria):
+   el resto es pared, blanco y tinta, para que el color siempre signifique algo. */
 :root {
-  --verde-900: #0B3527;
-  --verde-700: #0D4F3C;
-  --verde-600: #146B50;
-  --verde-500: #1B8A63;
-  --verde-100: #E2EEE8;
-  --verde-50: #F0F5F2;
-  --agua: #0A7EA4;
-  --tinta: #17231E;
-  --tinta-suave: #5B6762;
-  --linea: #E0E5E2;
-  --fondo: #F1F3F2;
+  --pared: #EEF1F2;
+  --blanco: #FFFFFF;
+  --tinta: #14202B;
+  --tinta-suave: #4D5A66;
+  --tinta-tenue: #8A96A1;
+  --linea: #D9DFE3;
+  --agua: #0096C7;            /* solo líquido y progreso */
+  --agua-oscura: #00739A;
   --alerta: #B4410C;
-  --sombra: 0 1px 2px rgb(23 35 30 / 0.06), 0 2px 8px rgb(23 35 30 / 0.05);
+
+  /* Zonas (BICSc): las mismas que ZONAS en lib/ui.js */
+  --rojo: #C62828;
+  --amarillo: #F2B705;
+  --azul: #1D6FB8;
+  --verde: #2E7D32;
+
+  /* Nombres que usan las vistas de supervisor. */
+  --fondo: var(--pared);
+  --superficie: var(--blanco);
+  --superficie-2: #F4F6F7;
+  --linea-fuerte: #BFC8CE;
+  --acento: var(--tinta);
+  --acento-oscuro: var(--tinta);
+  --acento-vivo: var(--agua);
+  --acento-fantasma: #E6F4FA;
+  --verde-900: var(--tinta);
+  --verde-700: var(--tinta);
+  --verde-600: var(--tinta);
+  --verde-500: var(--tinta);
+  --verde-100: #E6F4FA;
+  --verde-50: #F4F6F7;
+
+  --radio-tecla: 14px;
+  --radio: 8px;
+  --sombra: 0 1px 2px rgb(20 32 43 / 0.08);
+  --fuente: 'Overpass', 'Segoe UI', system-ui, sans-serif;
+  --fuente-titulo: var(--fuente);
   color-scheme: light;
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; }
 body {
   overflow: hidden; display: flow-root;
-  background: #E7ECE9; color: var(--tinta);
-  font-family: 'Source Sans 3', system-ui, 'Segoe UI', sans-serif; font-size: 17px; line-height: 1.4; font-feature-settings: 'tnum';
-  -webkit-font-smoothing: antialiased;
+  background: #DDE3E6; color: var(--tinta);
+  font-family: var(--fuente); font-size: 17px; line-height: 1.35; font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent;
 }
 button, input, select { font: inherit; color: inherit; }
 :focus-visible { outline: 3px solid var(--agua); outline-offset: 2px; }
 
-/* Botón principal: sólido, con un degradado apenas perceptible. --c define el color. */
+/* Tecla: botón físico de dispensador. El borde inferior más oscuro es el relieve;
+   al presionar baja y el relieve desaparece. --c = color de la tecla. */
+.tecla {
+  --c: var(--tinta);
+  --relieve: color-mix(in srgb, var(--c) 70%, black);
+  position: relative; cursor: pointer; border: 0; border-radius: var(--radio-tecla);
+  background: var(--c); color: #fff;
+  box-shadow: 0 4px 0 var(--relieve), 0 6px 10px rgb(20 32 43 / 0.12);
+  transform: translateY(0); transition: transform 0.06s ease, box-shadow 0.06s ease;
+}
+.tecla:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 0 0 var(--relieve), 0 1px 3px rgb(20 32 43 / 0.12); }
+.tecla:disabled { cursor: default; opacity: 0.4; }
+
+/* Botón común (supervisor): plano, sin relieve. */
 .boton {
-  --c: var(--verde-600);
-  position: relative; overflow: hidden; isolation: isolate; cursor: pointer;
-  border: 0; border-radius: 10px; color: #fff; font-weight: 600;
-  background: var(--c);
-  box-shadow: 0 1px 2px rgb(23 35 30 / 0.15);
+  --c: var(--tinta);
+  position: relative; cursor: pointer; border: 0; border-radius: var(--radio);
+  color: #fff; font-weight: 800; background: var(--c);
 }
-.boton:active:not(:disabled) { transform: translateY(1px); }
-.boton:disabled { cursor: default; opacity: 0.45; box-shadow: none; }
-.boton.secundario {
-  color: var(--verde-700); background: #fff; border: 1.5px solid var(--linea); box-shadow: none;
-}
+.boton:active:not(:disabled) { filter: brightness(0.9); }
+.boton:disabled { cursor: default; opacity: 0.4; }
+.boton.secundario { color: var(--tinta); background: var(--blanco); border: 1.5px solid var(--linea-fuerte); font-weight: 600; }
 
 .tarjeta {
   position: relative; overflow: hidden; isolation: isolate;
-  background: #fff; border: 1px solid var(--linea); border-radius: 12px; box-shadow: var(--sombra);
+  background: var(--blanco); border: 1px solid var(--linea); border-radius: var(--radio);
 }
-/* Franja de color arriba, como en los mockups. */
 .franja::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 5px; background: var(--banda, var(--verde-600));
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--banda, var(--agua));
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .tecla { transition: none; }
+}

@@ -32,7 +32,7 @@
   const MARCAS = $derived(Array.from({ length: Math.round(f.capacidad / f.paso) }, (_, i) => (i + 1) * f.paso));
 </script>
 
-<svg viewBox="{marcas ? -26 : 0} 0 {marcas ? 252 : 200} 285" class="recipiente" role="img"
+<svg viewBox="{marcas ? -26 : 0} 0 {marcas ? 252 : 200} 285" preserveAspectRatio="xMidYMin meet" class="recipiente" role="img"
   aria-label="{tipo === 'balde' ? 'Balde' : 'Botella'} lleno al {Math.round(nivel * 100)} por ciento">
   <defs><clipPath id="int-{id}"><path d={f.cuerpo} /></clipPath></defs>
 
@@ -62,7 +62,7 @@
     {#each MARCAS as v}
       {#if v % (f.paso * 2) === 0}
         {@const ym = y(v / f.capacidad)}
-        <text x={f.der(ym) + 8} y={ym + 4} text-anchor="start" font-size="13" fill="#56635d" font-family="Source Sans 3, sans-serif">{v} {f.unidad}</text>
+        <text x={f.der(ym) + 8} y={ym + 4} text-anchor="start" font-size="13" font-weight="600" fill="#4D5A66" font-family="Overpass, sans-serif">{v} {f.unidad}</text>
       {/if}
     {/each}
   {/if}

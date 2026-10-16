@@ -37,7 +37,8 @@ function cargar() {
 export const db = $state(cargar());
 
 /** Estado de la interfaz que no se guarda. enfoque = pantalla de dispensar a pantalla completa. */
-export const ui = $state({ enfoque: false });
+// ocupado = la máquina está llenando: todo lo demás se bloquea hasta que termine.
+export const ui = $state({ enfoque: false, ocupado: false });
 
 $effect.root(() => {
   $effect(() => {

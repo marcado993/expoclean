@@ -29,8 +29,18 @@ import i_botella from '@tabler/icons/outline/bottle.svg?raw';
 import i_sanitario from '@tabler/icons/outline/wash-hand.svg?raw';
 import i_tocar from '@tabler/icons/outline/hand-finger.svg?raw';
 import i_hoy from '@tabler/icons/outline/calendar-check.svg?raw';
+import i_wifi from '@tabler/icons/outline/wifi.svg?raw';
+import i_sinwifi from '@tabler/icons/outline/wifi-off.svg?raw';
+import i_rayo from '@tabler/icons/outline/bolt.svg?raw';
+import i_chip from '@tabler/icons/outline/cpu.svg?raw';
+import i_refresh from '@tabler/icons/outline/refresh.svg?raw';
 
 export const ICONOS = {
+  wifi: i_wifi,
+  sinwifi: i_sinwifi,
+  rayo: i_rayo,
+  chip: i_chip,
+  refresh: i_refresh,
   hoy: i_hoy,
   tocar: i_tocar,
   botella: i_botella,

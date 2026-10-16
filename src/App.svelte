@@ -3,13 +3,16 @@
   import Kiosko from './views/Kiosko.svelte';
   import Areas from './views/Areas.svelte';
   import Impacto from './views/Impacto.svelte';
+  import Admin from './views/Admin.svelte';
   import Logo from './components/Logo.svelte';
+  import { ui } from './lib/store.svelte.js';
 
   // Cada vista es un módulo independiente (views/ + lib/): se puede separar en microfrontends después.
   const vistas = {
     kiosko: { nombre: 'Dispensador', glifo: 'inicio', comp: Kiosko },
     areas: { nombre: 'Lugares', glifo: 'lugar', comp: Areas },
     impacto: { nombre: 'Impacto', glifo: 'gota', comp: Impacto },
+    admin: { nombre: 'Admin', glifo: 'chip', comp: Admin },
   };
 
   const desdeHash = () => (location.hash.slice(1) in vistas ? location.hash.slice(1) : 'kiosko');
@@ -24,6 +27,7 @@
   // Acceso del supervisor desde el dispensador: mantener presionado 1.5 s (quien limpia no entra sin querer).
   let temporizador;
   function presionar() {
+    if (ui.ocupado) return; // mientras llena no se sale del kiosko
     temporizador = setTimeout(() => (location.hash = '#areas'), 1500);
   }
   function soltar() {
@@ -54,10 +58,10 @@
       </span>
     {:else}
       <a href="#kiosko" class="volver" aria-label="Volver al dispensador">
-        <Icono nombre="izquierda" size={24} />
+        <Icono nombre="izquierda" size={22} trazo={2.4} /><span>Volver</span>
       </a>
-      <Logo claro />
-      <span class="rol">Supervisor</span>
+      <span class="separador" aria-hidden="true"></span>
+      <span class="rol">{vistas[actual].nombre}</span>
     {/if}
   </header>
 
@@ -81,40 +85,46 @@
   .telefono {
     position: relative; isolation: isolate; overflow: hidden;
     display: flex; flex-direction: column;
-    width: 100%; height: 100dvh; background: var(--fondo);
+    width: 100%; height: 100dvh; background: var(--pared);
   }
   @media (min-width: 520px) {
     .telefono {
       width: 412px; height: min(880px, calc(100dvh - 28px)); margin: 14px auto;
-      border-radius: 36px; border: 9px solid #1d2b24;
-      box-shadow: 0 30px 60px rgb(11 61 42 / 0.25);
+      border-radius: 36px; border: 9px solid #1B2630;
+      box-shadow: 0 30px 60px rgb(20 32 43 / 0.25);
     }
   }
 
   .barra {
     flex: none; display: flex; justify-content: space-between; align-items: center;
-    height: 60px; padding: 0 10px 0 16px; color: var(--tinta-suave);
-    background: #fff; border-bottom: 1px solid var(--linea);
+    height: 60px; padding: 0 10px 0 16px; background: var(--blanco); border-bottom: 1px solid var(--linea);
   }
-  .barra:has(.rol) { color: #fff; background: var(--verde-700); border-bottom-color: var(--verde-900); padding-left: 6px; }
-  .derecha { display: flex; align-items: center; gap: 4px; }
-  .hora { font-size: 1.05rem; font-weight: 500; color: var(--tinta); font-variant-numeric: tabular-nums; }
-  .supervisor { width: 44px; height: 44px; display: grid; place-items: center; border: 1px solid var(--linea); border-radius: 10px; background: #fff; color: var(--tinta-suave); cursor: pointer; touch-action: none; user-select: none; }
-  .volver { width: 44px; height: 44px; display: grid; place-items: center; color: #fff; border-radius: 12px; }
-  .rol { font-size: 0.75rem; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: rgb(255 255 255 / 0.14); }
+  .barra:has(.rol) { justify-content: flex-start; gap: 12px; padding-left: 6px; }
+  .derecha { display: flex; align-items: center; gap: 6px; }
+  .hora { font-weight: 600; font-size: 1.1rem; color: var(--tinta-suave); }
+  .supervisor {
+    width: 44px; height: 44px; display: grid; place-items: center; border: 0; border-radius: var(--radio);
+    background: none; color: var(--tinta-tenue); cursor: pointer; touch-action: none; user-select: none;
+  }
+  .volver {
+    height: 44px; display: flex; align-items: center; gap: 2px; padding: 0 8px 0 4px; text-decoration: none;
+    color: var(--tinta-suave); font-weight: 600; font-size: 1rem; border-radius: var(--radio);
+  }
+  .separador { width: 1px; height: 28px; background: var(--linea); }
+  .rol { font-weight: 800; font-size: 1.3rem; letter-spacing: -0.01em; color: var(--tinta); }
 
-  main { position: relative; flex: 1; min-height: 0; overflow: hidden; padding: 14px 14px 12px; }
+  main { position: relative; flex: 1; min-height: 0; overflow: hidden; padding: 16px 16px 14px; }
 
   .inferior {
     flex: none; display: flex; justify-content: space-around; padding: 6px 8px 10px;
-    background: #fff; border-top: 1px solid var(--linea);
+    background: var(--blanco); border-top: 1px solid var(--linea);
   }
   .inferior a {
-    position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 90px; padding-top: 8px;
-    color: var(--tinta-suave); text-decoration: none; font-size: 0.78rem; font-weight: 600;
+    position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 72px; padding-top: 8px;
+    color: var(--tinta-tenue); text-decoration: none; font-size: 0.8rem; font-weight: 600;
   }
-  .inferior a.activo { color: var(--verde-700); }
+  .inferior a.activo { color: var(--tinta); font-weight: 800; }
   .inferior a.activo::before {
-    content: ''; position: absolute; top: -7px; width: 36px; height: 3px; border-radius: 0 0 3px 3px; background: var(--verde-600);
+    content: ''; position: absolute; top: -7px; width: 40px; height: 3px; border-radius: 0 0 3px 3px; background: var(--tinta);
   }
 </style>
