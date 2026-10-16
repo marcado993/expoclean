@@ -7,6 +7,26 @@
 
 El servidor (`server/index.js`) no necesita librerías: solo Node 20 o superior. Sirve la app ya compilada y la API en el mismo puerto.
 
+## Instalación actual (16 oct 2026)
+
+Ya está corriendo en `http://149.130.170.232:8080` (Oracle Linux 9, usuario `opc`), como servicio `cleandose`:
+
+- Código: `/opt/cleandose` (solo `dist/`, `server/`, `src/lib/catalogo.js`, `src/lib/traza.js` y `package.json`; menos de 1 MB).
+- Datos: `/var/lib/cleandose/estado.json`.
+- Token: en `/etc/systemd/system/cleandose.service` (no está en el repositorio).
+- Ver estado y registros: `sudo systemctl status cleandose` y `sudo journalctl -u cleandose -f`.
+
+Para actualizar desde una compu con el repositorio (compila aquí y sube solo lo necesario, sin llenar el disco del servidor):
+
+```bash
+pnpm build
+tar -czf cleandose.tgz package.json dist server/index.js server/cleandose.service src/lib/catalogo.js src/lib/traza.js
+scp cleandose.tgz opc@149.130.170.232:/tmp/
+ssh opc@149.130.170.232 "sudo rm -rf /opt/cleandose/dist && sudo tar -xzf /tmp/cleandose.tgz -C /opt/cleandose && sudo systemctl restart cleandose && rm /tmp/cleandose.tgz"
+```
+
+Si alguna vez hay que instalarlo desde cero en otro servidor, siguen los pasos de abajo.
+
 ## 1. En tu servidor (una sola vez)
 
 Conéctate por SSH y ejecuta (Ubuntu; en Oracle Linux cambia `apt` por `dnf`):
