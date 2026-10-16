@@ -133,7 +133,7 @@
     {/if}
   </header>
 
-  {#if !datos.conectado && datos.cargado}
+  {#if !datos.conectado && datos.cargado && datos.fallos >= 2}
     <p class="sin-red">Sin conexión con el servidor. Reintentando…</p>
   {/if}
 

@@ -56,7 +56,8 @@ export function conectar() {
     let pausa = 1000;
     for (;;) {
       try {
-        aplicar(datos.cargado ? await api.eventos(datos.version) : await api.estado());
+        // Tras un fallo se pregunta con la consulta rápida (estado), no con la que espera 20 s.
+        aplicar(datos.cargado && datos.conectado ? await api.eventos(datos.version) : await api.estado());
         pausa = 1000;
       } catch {
         datos.conectado = false;
