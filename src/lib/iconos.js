@@ -35,7 +35,46 @@ import i_rayo from '@tabler/icons/outline/bolt.svg?raw';
 import i_chip from '@tabler/icons/outline/cpu.svg?raw';
 import i_refresh from '@tabler/icons/outline/refresh.svg?raw';
 
+import i_escanear from '@tabler/icons/outline/scan.svg?raw';
+import i_historial from '@tabler/icons/outline/history.svg?raw';
+import i_campana from '@tabler/icons/outline/bell.svg?raw';
+import i_usuario from '@tabler/icons/outline/user.svg?raw';
+import i_hoja from '@tabler/icons/outline/leaf.svg?raw';
+import i_info from '@tabler/icons/outline/info-circle.svg?raw';
+import i_calendario from '@tabler/icons/outline/calendar.svg?raw';
+import i_grupo from '@tabler/icons/outline/users.svg?raw';
+import i_peligro from '@tabler/icons/outline/alert-triangle.svg?raw';
+import i_brillo from '@tabler/icons/outline/sparkles.svg?raw';
+import i_escudo from '@tabler/icons/outline/shield-plus.svg?raw';
+import i_camara from '@tabler/icons/outline/camera.svg?raw';
+import i_abajo from '@tabler/icons/outline/chevron-down.svg?raw';
+import i_flecha from '@tabler/icons/outline/arrow-right.svg?raw';
+import i_salir from '@tabler/icons/outline/logout.svg?raw';
+import i_portapapeles from '@tabler/icons/outline/clipboard-list.svg?raw';
+import i_nuevo_usuario from '@tabler/icons/outline/user-plus.svg?raw';
+import i_enviar from '@tabler/icons/outline/send.svg?raw';
+import i_regla2 from '@tabler/icons/outline/ruler-2.svg?raw';
+
 export const ICONOS = {
+  'escanear': i_escanear,
+  'historial': i_historial,
+  'campana': i_campana,
+  'usuario': i_usuario,
+  'hoja': i_hoja,
+  'info': i_info,
+  'calendario': i_calendario,
+  'grupo': i_grupo,
+  'peligro': i_peligro,
+  'brillo': i_brillo,
+  'escudo': i_escudo,
+  'camara': i_camara,
+  'abajo': i_abajo,
+  'flecha': i_flecha,
+  'salir': i_salir,
+  'portapapeles': i_portapapeles,
+  'nuevo-usuario': i_nuevo_usuario,
+  'enviar': i_enviar,
+  'regla2': i_regla2,
   wifi: i_wifi,
   sinwifi: i_sinwifi,
   rayo: i_rayo,

@@ -1,0 +1,20 @@
+# Servicio systemd para el servidor CleanDose.
+# Copiar a /etc/systemd/system/cleandose.service, cambiar el token y:
+#   sudo systemctl daemon-reload && sudo systemctl enable --now cleandose
+[Unit]
+Description=CleanDose (servidor de la app y del ESP32)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+WorkingDirectory=/opt/cleandose
+ExecStart=/usr/bin/node server/index.js
+Environment=PORT=8080
+Environment=CLEANDOSE_TOKEN=CAMBIA_ESTE_TOKEN
+Environment=CLEANDOSE_DATOS=/var/lib/cleandose/estado.json
+Restart=always
+RestartSec=3
+User=cleandose
+
+[Install]
+WantedBy=multi-user.target

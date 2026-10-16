@@ -1,80 +1,52 @@
-# SmartDose + EcoLoop — Reto 4 (Hack the Water)
+# CleanDose — Reto 4 (Hack the Water)
 
-Dispensador que entrega el balde o spray **ya mezclado** con la dosis exacta de producto biodegradable para cada lugar, conectado al módulo EcoLoop que recupera agua gris para un segundo uso.
-
-## Flujo de quien limpia: 1 toque, ~10 segundos, sin scroll
-
-1. Pone su balde o botella debajo de la máquina.
-2. Toca la tarjeta de su lugar (ilustración + nombre). La máquina llena sola: no hay botón "Llenar" ni "Detener".
-3. Ve el recipiente llenarse, escucha "Listo" y la pantalla vuelve sola al inicio en 5 s.
-
-- **Ninguna pantalla tiene scroll** (ni kiosko, ni supervisor). Si no caben los lugares, hay flechas grandes; si sobra espacio, las tarjetas crecen.
-- **Voz:** el botón del micrófono entiende frases como "voy a limpiar el baño del segundo piso" (`src/lib/intencion.js`, sin internet ni llaves de API; la transcripción la hace Chrome/Edge). Si hay dudas, muestra solo los lugares posibles.
-- **Cargas múltiples:** si un lugar necesita 2 baldes, la tarjeta muestra "Falta 1" para que nadie tenga que recordarlo.
-- El supervisor entra manteniendo presionado el engrane 1.5 s, así quien limpia no entra sin querer.
-
-## Supervisor: lugares y croquis
-
-- **Dictar o describir:** "baño del segundo piso, 25 metros, muy sucio" llena nombre, m², tipo y suciedad.
-- **Croquis:** se sube una foto del plano del edificio, se marca una pared de medida conocida (escala) y se dibuja cada cuarto: los m² salen solos. Hay un plano de ejemplo para la demo.
-- **Impacto:** etiqueta tipo "Nutrition Facts" con el ahorro frente a llenar "a ojo" y el agua recuperada por EcoLoop.
-
-## Cálculo de consumo recomendado por área
-
-Archivo: `src/lib/dosis.js` (con tests en `dosis.test.js`).
+Dosificador de productos de limpieza con 4 compartimentos. El operario elige la zona y el tipo de limpieza, la app calcula cuánto producto y agua lleva, y la máquina sirve la dosis exacta. El administrador ve la trazabilidad y manda operarios a limpiar zonas.
 
 ```
-solución   = max(área_m² × tasa_del_método, mínimo_del_recipiente)
-cargas     = ⌈ solución / capacidad_del_recipiente ⌉
-químico    = solución_por_carga / (dilución + 1)
-agua       = solución_por_carga − químico
+ Celulares (app)  ──HTTP──►  Servidor (server/index.js)  ◄──HTTP──  ESP32 (firmware/cleandose)
+ operario / admin             guarda todo, sirve la app,             pregunta "¿hay orden?",
+                              avisa al instante                      prende la bomba N segundos
 ```
 
-| Superficie | Recipiente | Tasa (mL/m²) | Dilución poca / normal / mucha suciedad |
-|---|---|---|---|
-| Piso | balde 8 L (mín. 3 L) | 50 | 1:200 / 1:100 / 1:50 |
-| Baño | balde 8 L | 70 | 1:100 / 1:50 / 1:25 |
-| Vidrios | spray 500 mL (mín. 250) | 20 | 1:200 / 1:150 / 1:100 |
-| Mesas | spray 500 mL | 25 | 1:150 / 1:80 / 1:40 |
+Instalación en el servidor: **[DESPLIEGUE.md](DESPLIEGUE.md)**.
 
-- **El área define cuánta solución; la suciedad define qué tan concentrada.** Así un lugar sucio no recibe más agua, solo más producto.
-- Los valores son de partida. **Hay que reemplazarlos** con la ficha técnica del producto biodegradable que se use y calibrarlos en el piloto.
+## Operario
 
-### Métrica para la validación
-
-La pantalla **Impacto** compara lo dispensado contra la *línea base* (cómo se llena hoy "a ojo": balde lleno + un chorro). Esa línea base (`LINEA_BASE` en `dosis.js`) **hay que medirla en el sitio**: antes de instalar, anotar cuántos litros y mL usa el personal en 5–10 limpiezas reales. Con eso el % de ahorro es evidencia, no supuesto.
-
-Ojo: con la línea base de ejemplo, un pasillo de 120 m² da casi el mismo químico que "a ojo" (59 vs 60 mL) y 26 % menos agua. El ahorro grande aparece en áreas pequeñas y en sprays, donde hoy se sobredosifica más.
-
-## Prototipo de hardware recomendado
-
-Para el hackathon, **un solo ESP32** hace de SmartDose y además lee el sensor de flujo del EcoLoop:
-
-| Pieza | Para qué |
+| Función | Qué hace |
 |---|---|
-| ESP32 | Wi-Fi + control. Crea su propia red (`SmartDose`, IP 192.168.4.1) |
-| Bomba peristáltica 12 V | Concentrado. Muy precisa por tiempo, el químico no toca la bomba |
-| Bomba 12 V o electroválvula | Agua desde el tanque de agua recuperada del EcoLoop |
-| Sensor de flujo YF-S201 (×2) | Mide el agua dispensada y el agua recuperada por EcoLoop |
-| 2 MOSFET (IRLZ44N) o módulo relé | Prender/apagar bombas desde el ESP32 |
-| Fuente 12 V + regulador a 5 V | Alimentación |
+| **Escanear área** | Foto del lugar + zona + tipo de limpieza (diaria, profunda, desinfección) → dosificación recomendada: producto, agua y recipiente. Los m² son los que registró el administrador para esa zona. |
+| **Configuración CleanDose** | Qué producto tiene cada compartimento (lista agrupada por tipo: cloro, desinfectante, desengrasante, detergente, limpiavidrios, aceite) y "Lo llené" cuando se recarga. |
+| **Dosificación CleanDose** | La única que manda la orden a la máquina. Una dosis a la vez: si otro operario está dispensando, avisa cuánto falta. Si se cae la señal, reintenta sin dispensar dos veces. |
+| **Historial personal** | Sus dosis registradas. |
 
-Firmware: `firmware/smartdose/smartdose.ino` (requiere librería ArduinoJson v7). Calibrar `QUIMICO_ML_POR_SEG` y `PULSOS_POR_LITRO` con un vaso medidor antes de la demo.
+Abajo: **Zonas**, **Notificaciones** (tareas que mandó el admin, con sonido, vibración y voz) y **Perfil**.
 
-Recomendación: para la demo, dispensar solo **sprays de 500 mL** (rápido de mostrar en vivo) y dejar el balde en modo simulación.
+## Administrador
 
-## Stack: ¿Svelte o microfrontends?
+- **Panel:** zonas limpiadas, producto usado (contra el periodo anterior), consumo por operario, zonas sin limpiar y la tabla de trazabilidad. Pestañas por zona, por operario (quién gasta de más o se queda corto frente al promedio) y alertas (compartimentos vacíos o por acabarse).
+- **Asignación de espacios:** crear zonas escribiendo, dictando o dibujando sobre el croquis del edificio (los m² salen solos).
+- **Asignar operario a zona:** "se regó algo en el Laboratorio 2" → elegir zona → *Mandar a limpiar*. En automático va al operario con menos tareas; le llega el aviso al instante.
+- **Máquina y operarios:** si el ESP32 está conectado, probar la bomba, y agregar o quitar operarios.
 
-Svelte 5 + Vite, una sola app. **Microfrontends no vale la pena aquí**: son 3 pantallas, un equipo pequeño y 48 horas; añaden configuración (Module Federation / single-spa) sin ningún beneficio para la demo. El código ya está separado por módulos (`views/` + `lib/`) para poder partirlo más adelante si crece.
+## Código
 
-## Correr
+| Archivo | |
+|---|---|
+| `server/index.js` | API + archivos de la app. Node sin dependencias. Datos en un JSON. |
+| `firmware/cleandose/cleandose.ino` | ESP32: long polling al servidor, una bomba por compartimento (hoy todos en GPIO 22). |
+| `firmware/prueba_rele/prueba_rele.ino` | Prueba aislada del relé en GPIO 22. |
+| `src/lib/catalogo.js` | Productos, tipos, diluciones, receta recomendada y caudal de la bomba. |
+| `src/lib/traza.js` | Análisis de trazabilidad (con tests). |
+| `src/lib/api.js`, `src/lib/nube.svelte.js` | Cliente del servidor y estado compartido en tiempo real. |
+| `src/views/operario/*`, `src/views/admin/*` | Pantallas. |
+
+## Desarrollo
 
 ```bash
 pnpm install
-pnpm dev        # http://localhost:5173  (también en la red local, para abrirlo en una tablet)
-pnpm test       # tests del cálculo de dosis
+node server/index.js   # servidor en :8080
+pnpm dev               # app en :5173; /api va al servidor local
+pnpm test
 ```
 
-Pantallas: `#kiosko` (tablet del dispensador), `#areas` (lugares y croquis), `#impacto` (métricas y ajustes del ESP32 / modo demostración).
-
-Stack: Svelte 5 + Vite. Sin animaciones decorativas: solo cambia lo que informa (nivel del líquido y barra de progreso).
+Las diluciones y el caudal (`CAUDAL_ML_S`) son valores de partida: reemplazarlos con la ficha técnica de cada producto y calibrar la bomba con un vaso medidor.

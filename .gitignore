@@ -1,3 +1,4 @@
 .superdesign/tmp/
 node_modules/
 dist/
+server/datos/

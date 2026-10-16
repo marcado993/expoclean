@@ -1,13 +1,15 @@
 <script>
-  import Icono from '../components/Icono.svelte';
-  // Supervisor: registra los lugares una vez. Tres formas: escribir, dictar, o dibujar sobre el croquis.
+  import Icono from '../../components/Icono.svelte';
+  // Administrador: crea los espacios que aparecen en la app. Tres formas: escribir, dictar, o dibujar sobre el croquis.
+  // Todo se guarda en el servidor.
   // Sin scroll: lista paginada, croquis que se ajusta a la pantalla y una hoja que se abre encima.
-  import { db } from '../lib/store.svelte.js';
-  import { calcularDosis, SUPERFICIES, SUCIEDAD, PRODUCTOS, RECIPIENTES } from '../lib/dosis.js';
-  import { CATEGORIAS, SUCIEDAD_COLOR, ZONAS, zonaDe } from '../lib/ui.js';
-  import { interpretarLugar, crearOyente } from '../lib/intencion.js';
-  import { cargarImagen, planoEjemplo, puntoSvg } from '../lib/croquis.js';
-  import Ficha from '../components/Ficha.svelte';
+  import { datos } from '../../lib/nube.svelte.js';
+  import { api } from '../../lib/api.js';
+  import { calcularDosis, SUPERFICIES, SUCIEDAD, PRODUCTOS, RECIPIENTES } from '../../lib/dosis.js';
+  import { CATEGORIAS, SUCIEDAD_COLOR, ZONAS, zonaDe } from '../../lib/ui.js';
+  import { interpretarLugar, crearOyente } from '../../lib/intencion.js';
+  import { cargarImagen, puntoSvg } from '../../lib/croquis.js';
+  import Ficha from '../../components/Ficha.svelte';
 
   let pestaña = $state('lista');
 
@@ -22,8 +24,8 @@
     ro.observe(caja);
     return () => ro.disconnect();
   });
-  const paginas = $derived(Math.max(1, Math.ceil(db.areas.length / porPagina)));
-  const visibles = $derived(db.areas.slice(pagina * porPagina, (pagina + 1) * porPagina));
+  const paginas = $derived(Math.max(1, Math.ceil(datos.espacios.length / porPagina)));
+  const visibles = $derived(datos.espacios.slice(pagina * porPagina, (pagina + 1) * porPagina));
   $effect(() => { if (pagina > paginas - 1) pagina = paginas - 1; });
 
   const ml = (x) => (x >= 1000 ? `${(x / 1000).toFixed(2).replace(/\.?0+$/, '')} L` : `${x} mL`);
@@ -45,26 +47,27 @@
     descripcion = '';
   }
 
-  function guardar(e) {
+  let errorHoja = $state('');
+  async function guardar(e) {
     e.preventDefault();
     if (!hoja.form.nombre.trim() || !vista) return;
-    const datos = { ...hoja.form, ...(hoja.croquis ? { croquis: hoja.croquis } : {}) };
-    if (hoja.id) Object.assign(db.areas.find((a) => a.id === hoja.id), datos);
-    else db.areas.push({ ...datos, id: crypto.randomUUID() });
-    hoja = null;
+    errorHoja = '';
+    try {
+      await api.guardarEspacio({ ...hoja.form, ...(hoja.id ? { id: hoja.id } : {}), ...(hoja.croquis ? { croquis: hoja.croquis } : {}) });
+      hoja = null;
+    } catch (err) {
+      errorHoja = err.message ?? 'No se pudo guardar. Revisa la conexión.';
+    }
   }
 
-  function alternarHoy(id) {
-    const hoy = db.hoy ?? [];
-    db.hoy = hoy.includes(id) ? hoy.filter((x) => x !== id) : [...hoy, id];
-  }
-
-  function borrar() {
-    if (!confirm(`¿Borrar "${hoja.form.nombre}"? Desaparece del dispensador.`)) return;
-    db.areas = db.areas.filter((a) => a.id !== hoja.id);
-    delete db.pendientes[hoja.id];
-    db.hoy = (db.hoy ?? []).filter((x) => x !== hoja.id);
-    hoja = null;
+  async function borrar() {
+    if (!confirm(`¿Borrar "${hoja.form.nombre}"? Desaparece de la app.`)) return;
+    try {
+      await api.borrarEspacio(hoja.id);
+      hoja = null;
+    } catch (err) {
+      errorHoja = err.message ?? 'No se pudo borrar.';
+    }
   }
 
   // ── Describir o dictar: rellena el formulario mientras se habla o escribe
@@ -95,16 +98,21 @@
   let escala = $state(null); // { px } esperando los metros
   let metros = $state(5);
   let errorPlano = $state('');
-  const c = $derived(db.croquis);
-  const conCroquis = $derived(db.areas.filter((a) => a.croquis));
+  // El croquis (imagen del plano) se pide aparte: es pesado y solo lo usa esta pantalla.
+  let croquis = $state(null);
+  $effect(() => { api.croquis().then((x) => (croquis = x)).catch(() => {}); });
+  const guardarCroquis = () => api.guardarCroquis($state.snapshot(croquis)).catch(() => (errorPlano = 'No se pudo guardar el plano en el servidor.'));
+  const c = $derived(croquis);
+  const conCroquis = $derived(datos.espacios.filter((a) => a.croquis));
 
   async function subir(e) {
     const archivo = e.currentTarget.files?.[0];
     e.currentTarget.value = '';
     if (!archivo) return;
     try {
-      db.croquis = await cargarImagen(archivo);
+      croquis = await cargarImagen(archivo);
       errorPlano = '';
+      guardarCroquis();
       modo = 'escala';
     } catch (err) {
       errorPlano = `${err.message}. Sube una foto o captura del plano (JPG o PNG).`;
@@ -139,7 +147,8 @@
   function fijarEscala(e) {
     e.preventDefault();
     if (!(metros > 0)) return;
-    db.croquis.mpp = metros / escala.px;
+    croquis.mpp = metros / escala.px;
+    guardarCroquis();
     escala = null;
     modo = 'dibujar';
   }
@@ -153,6 +162,10 @@
 </script>
 
 <div class="lugares">
+  <div>
+    <h1 class="titulo">Asignación de espacios</h1>
+    <p class="bajada">Crea las zonas que aparecen en la app.</p>
+  </div>
   <div class="pestañas" role="tablist">
     <button role="tab" aria-selected={pestaña === 'lista'} class:activa={pestaña === 'lista'} onclick={() => (pestaña = 'lista')}>
       <Icono nombre="lista" size={20} /> Lista
@@ -166,7 +179,6 @@
     <div class="lista tarjeta" bind:this={caja}>
       {#each visibles as a, i (a.id)}
         {@const k = CATEGORIAS[a.superficie]}
-        {@const deHoy = (db.hoy ?? []).includes(a.id)}
         <div class="fila-caja" style="height:{ALTO_FILA}px">
         <button class="fila" onclick={() => abrir(a)}>
           <span class="azulejo" style="--c:{ZONAS[zonaDe(a)].color}; --t:{ZONAS[zonaDe(a)].tinta}"><Icono nombre={a.superficie} size={24} trazo={1.8} /></span>
@@ -174,13 +186,9 @@
           {#if a.croquis}<span class="etiqueta-mapa" title="Dibujado en el croquis"><Icono nombre="mapa" size={16} /></span>{/if}
           <span class="chevron"><Icono nombre="derecha" size={20} /></span>
         </button>
-        <button class="hoy" class:activo={deHoy} aria-pressed={deHoy} onclick={() => alternarHoy(a.id)}
-          aria-label={deHoy ? `Quitar ${a.nombre} de hoy` : `Asignar ${a.nombre} para hoy`}>
-          <Icono nombre="hoy" size={20} />Hoy
-        </button>
         </div>
       {:else}
-        <p class="vacio">Todavía no hay lugares. Agrega el primero o dibújalo en el croquis.</p>
+        <p class="vacio">Todavía no hay espacios. Agrega el primero o dibújalo en el croquis.</p>
       {/each}
     </div>
 
@@ -202,7 +210,7 @@
       </button>
       <button class="boton" onclick={() => abrir(null)}>
         <Icono nombre="mas" size={20} />
-        Agregar lugar
+        Agregar espacio
       </button>
     </div>
   {:else}
@@ -239,7 +247,6 @@
           <Icono nombre="mapa" size={44} />
           <p>Sube una foto del croquis del edificio. Marca una medida conocida y dibuja cada cuarto: los m² salen solos.</p>
           {#if errorPlano}<p class="error">{errorPlano}</p>{/if}
-          <button class="boton secundario" onclick={() => (db.croquis = planoEjemplo())}>Usar plano de ejemplo</button>
         </div>
       {/if}
     </div>
@@ -278,7 +285,7 @@
   {#if hoja}
     <form class="hoja" onsubmit={guardar}>
       <div class="hoja-cabeza">
-        <h2>{hoja.id ? 'Editar lugar' : 'Nuevo lugar'}</h2>
+        <h2>{hoja.id ? 'Editar espacio' : 'Nuevo espacio'}</h2>
         <button type="button" class="cerrar" onclick={() => { oyente?.stop(); hoja = null; }} aria-label="Cerrar">
           <Icono nombre="cerrar" size={22} />
         </button>
@@ -341,6 +348,7 @@
         </div>
       {/if}
 
+      {#if errorHoja}<p class="error">{errorHoja}</p>{/if}
       <div class="botones">
         {#if hoja.id}<button type="button" class="boton secundario borrar" onclick={borrar}>Borrar</button>{/if}
         <button type="submit" class="boton">Guardar</button>
@@ -362,11 +370,6 @@
   .lista { flex: 1; min-height: 0; padding: 0 12px; }
   .fila-caja { display: flex; align-items: stretch; border-bottom: 1px solid var(--linea); }
   .fila-caja .fila { border-bottom: 0; }
-  .hoy {
-    flex: none; align-self: center; display: flex; align-items: center; gap: 4px; height: 40px; padding: 0 10px; margin-left: 6px;
-    border: 1px solid var(--linea); border-radius: 999px; background: #fff; color: var(--tinta-suave); font-weight: 600; font-size: 0.85rem; cursor: pointer;
-  }
-  .hoy.activo { background: var(--verde-600); border-color: var(--verde-600); color: #fff; }
   .zonas { flex: none; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
   .zona-op {
     display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 10px; cursor: pointer;

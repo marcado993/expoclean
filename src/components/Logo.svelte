@@ -1,12 +1,11 @@
 <span class="logo">
-  <svg viewBox="0 0 32 32" width="26" height="26" aria-hidden="true">
-    <path d="M16 2.5 C16 2.5 5.5 14 5.5 20.5 a10.5 10.5 0 0 0 21 0 C26.5 14 16 2.5 16 2.5z" fill="var(--agua)" />
-    <path d="M11 21 a5 5 0 0 0 5 5" stroke="#fff" stroke-width="2.2" stroke-linecap="round" fill="none" />
+  <svg viewBox="0 0 32 32" width="28" height="28" aria-hidden="true">
+    <path d="M26 4C14 4 6 11 6 21c0 2.6.7 4.8 1.6 6.4C9.5 21 14 15.5 21 12c-5.6 4.2-9.4 9.1-11.3 15.6C11.3 28.5 13.4 29 16 29c8 0 13-7 13-17 0-3-.8-5.8-3-8z" fill="#2DB46A" />
   </svg>
-  <span class="nombre">SmartDose</span>
+  <span class="nombre">CleanDose</span>
 </span>
 
 <style>
-  .logo { display: inline-flex; align-items: center; gap: 7px; }
-  .nombre { font-weight: 800; font-size: 1.15rem; letter-spacing: -0.01em; color: var(--tinta); }
+  .logo { display: inline-flex; align-items: center; gap: 6px; }
+  .nombre { font-weight: 800; font-size: 1.35rem; letter-spacing: -0.02em; color: var(--verde-marca); }
 </style>
