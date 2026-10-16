@@ -5,6 +5,7 @@ import { api } from './api.js';
 export const datos = $state({
   cargado: false,
   conectado: false,
+  fallos: 0, // intentos seguidos sin respuesta del servidor
   version: 0,
   operarios: [],
   espacios: [],
@@ -39,6 +40,7 @@ function aplicar(e) {
   for (const k of ['version', 'operarios', 'espacios', 'compartimentos', 'tareas', 'registros', 'maquina']) datos[k] = e[k];
   datos.cargado = true;
   datos.conectado = true;
+  datos.fallos = 0;
 }
 
 /** Aplica de inmediato lo que respondió el servidor tras un cambio (sin esperar el siguiente aviso). */
@@ -58,6 +60,7 @@ export function conectar() {
         pausa = 1000;
       } catch {
         datos.conectado = false;
+        datos.fallos++;
         await new Promise((r) => setTimeout(r, pausa));
         pausa = Math.min(pausa * 2, 10000);
       }

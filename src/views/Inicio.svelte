@@ -23,7 +23,11 @@
   </div>
 
   {#if !datos.cargado}
-    <p class="aviso">{datos.conectado ? 'Cargando…' : 'Conectando con el servidor…'}</p>
+    {#if datos.fallos >= 2}
+      <p class="aviso error">No se puede conectar con el servidor. Revisa que este celular tenga internet (no la red del ESP32) y que la dirección sea <strong>http://149.130.170.232:8080</strong>.</p>
+    {:else}
+      <p class="aviso">Conectando con el servidor…</p>
+    {/if}
   {:else if datos.operarios.length === 0}
     <p class="aviso">Todavía no hay operarios. El administrador los agrega en Máquina y operarios.</p>
   {:else}
@@ -45,6 +49,7 @@
 <style>
   .inicio { height: 100%; display: flex; flex-direction: column; gap: 16px; }
   .aviso { margin: 0; font-size: 1.1rem; color: var(--tinta-suave); }
+  .aviso.error { padding: 12px 14px; border-radius: var(--radio); background: var(--t-rojo); color: #8A1F1F; font-size: 1rem; }
   .operarios { flex: 1; min-height: 0; overflow: hidden; display: grid; grid-template-columns: 1fr 1fr; align-content: start; gap: 14px; }
   .operario {
     height: 116px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 8px; cursor: pointer;

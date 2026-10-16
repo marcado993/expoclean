@@ -45,7 +45,7 @@ Abajo: **Zonas**, **Notificaciones** (tareas que mandó el admin, con sonido, vi
 ```bash
 pnpm install
 node server/index.js   # servidor en :8080
-pnpm dev               # app en :5173; /api va al servidor local
+pnpm dev               # app en :5173; /api va al servidor de producción (CLEANDOSE_API para otro)
 pnpm test
 ```
 
