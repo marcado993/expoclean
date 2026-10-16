@@ -321,7 +321,19 @@ ruta('DELETE', '/api/operarios/:id', (req, res, { p }) => {
 });
 
 // ESP32
-const esMaquina = (req) => req.headers['x-token'] === TOKEN;
+// Cada intento queda en el registro del servicio (journalctl -u cleandose) para diagnosticar conexiones.
+let ultimoAviso = 0;
+const esMaquina = (req) => {
+  const ok = req.headers['x-token'] === TOKEN;
+  const ip = req.headers['x-forwarded-for'] ?? req.socket.remoteAddress;
+  if (!ok) console.log(`ESP32 rechazado: token distinto desde ${ip}`);
+  else if (!maquinaEnLinea() || Date.now() - ultimoAviso > 600000) {
+    console.log(`ESP32 conectado desde ${ip}`);
+    ultimoAviso = Date.now();
+  }
+  estado.maquina.ultimoIntento = { fecha: new Date().toISOString(), ip, tokenOk: ok };
+  return ok;
+};
 
 ruta('GET', '/api/esp32/orden', async (req, res, { url }) => {
   if (!esMaquina(req)) return fallo(res, 401, 'token');
