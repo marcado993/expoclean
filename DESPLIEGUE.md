@@ -9,6 +9,10 @@ El servidor (`server/index.js`) no necesita librerías: solo Node 20 o superior.
 
 ## Instalación actual (16 oct 2026)
 
+**La app que usa la gente: https://expoclean.vercel.app** (Vercel publica solo en cada push a `main`).
+Vercel no tiene la API: `vercel.json` reenvía `/api/*` a `http://149.130.170.232:8080` (puente). Así el navegador
+habla solo https con Vercel, y Vercel habla con el servidor. El ESP32 va directo al servidor por http.
+
 Ya está corriendo en `http://149.130.170.232:8080` (Oracle Linux 9, usuario `opc`), como servicio `cleandose`:
 
 - Código: `/opt/cleandose` (solo `dist/`, `server/`, `src/lib/catalogo.js`, `src/lib/traza.js`, `src/lib/fijos.js` y `package.json`; menos de 1 MB).
