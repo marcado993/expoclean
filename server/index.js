@@ -183,7 +183,7 @@ ruta('GET', '/api/estado', (req, res) => responder(res, 200, resumen()));
 
 ruta('GET', '/api/eventos', async (req, res, { url }) => {
   const v = Number(url.searchParams.get('v') ?? 0);
-  await esperar(25000, () => estado.version > v);
+  await esperar(20000, () => estado.version > v); // < 25 s: pasa por el puente de Vercel sin cortarse
   responder(res, 200, resumen());
 });
 
