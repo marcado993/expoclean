@@ -11,7 +11,7 @@ El servidor (`server/index.js`) no necesita librerías: solo Node 20 o superior.
 
 Ya está corriendo en `http://149.130.170.232:8080` (Oracle Linux 9, usuario `opc`), como servicio `cleandose`:
 
-- Código: `/opt/cleandose` (solo `dist/`, `server/`, `src/lib/catalogo.js`, `src/lib/traza.js` y `package.json`; menos de 1 MB).
+- Código: `/opt/cleandose` (solo `dist/`, `server/`, `src/lib/catalogo.js`, `src/lib/traza.js`, `src/lib/fijos.js` y `package.json`; menos de 1 MB).
 - Datos: `/var/lib/cleandose/estado.json`.
 - Token: en `/etc/systemd/system/cleandose.service` (no está en el repositorio).
 - Ver estado y registros: `sudo systemctl status cleandose` y `sudo journalctl -u cleandose -f`.
@@ -20,7 +20,7 @@ Para actualizar desde una compu con el repositorio (compila aquí y sube solo lo
 
 ```bash
 pnpm build
-tar -czf cleandose.tgz package.json dist server/index.js server/cleandose.service src/lib/catalogo.js src/lib/traza.js
+tar -czf cleandose.tgz package.json dist server/index.js server/cleandose.service src/lib/catalogo.js src/lib/traza.js src/lib/fijos.js
 scp cleandose.tgz opc@149.130.170.232:/tmp/
 ssh opc@149.130.170.232 "sudo rm -rf /opt/cleandose/dist && sudo tar -xzf /tmp/cleandose.tgz -C /opt/cleandose && sudo systemctl restart cleandose && rm /tmp/cleandose.tgz"
 ```

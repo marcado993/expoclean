@@ -30,6 +30,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { PRODUCTOS, RECIPIENTES, mlProducto, segundosPara, N_COMPARTIMENTOS, CAPACIDAD_ML } from '../src/lib/catalogo.js';
 import { operarioMasLibre } from '../src/lib/traza.js';
+import { LUGARES_FIJOS, COMPARTIMENTOS_FIJOS, OPERARIOS_FIJOS } from '../src/lib/fijos.js';
 
 const AQUI = path.dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PORT ?? 8080);
@@ -42,7 +43,7 @@ const SIN_RESPUESTA_MS = 15000;      // orden que el ESP32 no tomó → error
 const MAX_REGISTROS = 5000;
 
 // ── Estado persistente ──────────────────────────────────────────────
-// Arranca vacío: el administrador crea operarios y espacios; el operario configura los compartimentos.
+// Si no hay datos, arranca con los lugares, productos y operarios fijos de src/lib/fijos.js.
 const estadoVacio = () => ({
   version: 1,
   operarios: [],
@@ -61,6 +62,13 @@ try {
 }
 let croquis = estado.croquis ?? null;
 delete estado.croquis;
+
+// Lo que esté vacío se llena con los datos fijos (no pisa nada que ya exista).
+if (!estado.espacios.length) estado.espacios = structuredClone(LUGARES_FIJOS);
+if (!estado.operarios.length) estado.operarios = structuredClone(OPERARIOS_FIJOS);
+if (estado.compartimentos.every((c) => !c.producto)) {
+  estado.compartimentos = COMPARTIMENTOS_FIJOS.map((producto) => ({ producto, nivel_ml: CAPACIDAD_ML, capacidad_ml: CAPACIDAD_ML }));
+}
 
 let guardando = null;
 function guardar() {

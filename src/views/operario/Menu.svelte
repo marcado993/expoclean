@@ -9,7 +9,7 @@
   const OPCIONES = [
     { ruta: 'op/escanear', titulo: 'Escanear área', texto: 'Escanea el piso o selecciona la zona para obtener la dosificación recomendada.', icono: 'escanear', tinte: 'verde' },
     { ruta: 'op/config', titulo: 'Configuración CleanDose', texto: 'Define qué producto contiene cada compartimento del dosificador.', icono: 'ajustes', tinte: 'azul' },
-    { ruta: 'op/dosificar', titulo: 'Dosificación CleanDose', texto: 'Selecciona el producto y dispensa la cantidad necesaria.', icono: 'gota', tinte: 'rosa' },
+    { ruta: 'op/dosificar', titulo: 'Dosificación CleanDose', texto: 'Toca el lugar y la máquina llena el recipiente.', icono: 'gota', tinte: 'rosa' },
     { ruta: 'op/historial', titulo: 'Historial personal', texto: 'Revisa tus limpiezas realizadas.', icono: 'historial', tinte: 'morado' },
   ];
 </script>
