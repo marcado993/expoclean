@@ -28,7 +28,7 @@ const char* TOKEN     = "cambiar-token";     // igual que CLEANDOSE_TOKEN en el 
 
 const int N = 4;
 const int PIN_BOMBA[N] = {22, 22, 22, 22};   // por ahora todos al mismo relé
-const bool RELE_ACTIVO_BAJO = true;          // si los relés hacen lo contrario, cambia a false
+const bool RELE_ACTIVO_BAJO = false;         // tu módulo se activa con HIGH: apagado = LOW. Si queda prendido solo, pon true
 const long SEG_MAX = 120;
 const int PIN_LED = 2;                       // LED de la placa: prendido = conectado al servidor
 
