@@ -54,7 +54,7 @@ function alDesconectar() {
 }
 
 /** Abre el selector de Bluetooth del navegador. Tiene que llamarse desde un toque del usuario. */
-export async function conectarMaquina() {
+export async function conectarMaquina(todos = false) {
   if (!maquina.soportado) {
     maquina.error = 'Este navegador no tiene Bluetooth. Usa Chrome en Android.';
     return false;
@@ -62,7 +62,12 @@ export async function conectarMaquina() {
   maquina.conectando = true;
   maquina.error = '';
   try {
-    const d = await navigator.bluetooth.requestDevice({ filters: [{ services: [SERVICIO] }, { name: 'CleanDose' }], optionalServices: [SERVICIO] });
+    // todos = sin filtro: lista cualquier dispositivo Bluetooth cercano (por si el anuncio de la máquina no trae el servicio).
+    const d = await navigator.bluetooth.requestDevice(
+      todos
+        ? { acceptAllDevices: true, optionalServices: [SERVICIO] }
+        : { filters: [{ services: [SERVICIO] }, { name: 'CleanDose' }], optionalServices: [SERVICIO] }
+    );
     await enlazar(d);
     return true;
   } catch (e) {

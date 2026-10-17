@@ -13,6 +13,9 @@
     <strong>{maquina.conectando ? 'Buscando…' : 'Conectar máquina'}</strong>
     {#if maquina.error}<small>{maquina.error}</small>{/if}
   </button>
+  {#if !maquina.conectada && !maquina.conectando}
+    <button class="otros" onclick={() => { tic(); conectarMaquina(true); }}>¿No aparece? Ver todos los dispositivos</button>
+  {/if}
 {:else if grande}
   <button class="grande" class:lista={maquina.conectada} onclick={() => { tic(); conectarMaquina(); }} disabled={maquina.conectando || maquina.conectada}>
     <span class="onda" aria-hidden="true"></span>
@@ -57,6 +60,7 @@
   }
   .fila strong { font-size: 1.1rem; font-weight: 700; }
   .fila small { width: 100%; font-weight: 500; }
+  .otros { display: block; width: 100%; margin-top: 6px; padding: 8px; border: 0; background: none; cursor: pointer; font-size: 0.85rem; font-weight: 500; color: var(--azul); text-decoration: underline; }
   .f-icono { position: relative; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: rgb(255 255 255 / 0.18); }
   .onda.chica { top: 0; left: 0; width: 44px; height: 44px; margin: 0; background: #fff; animation: onda 1.8s ease-out infinite; }
   @keyframes late { 50% { transform: scale(1.35); } }

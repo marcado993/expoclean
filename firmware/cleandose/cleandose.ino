@@ -40,6 +40,7 @@ const int PIN_BOMBA[N] = {22, 22, 22, 22};   // por ahora todos al mismo relé
 const bool RELE_ACTIVO_BAJO = false;         // tu módulo se activa con HIGH. Si queda prendido solo, pon true
 const long SEG_MAX = 120;
 const int PIN_LED = 2;
+const bool DEBUG_BLE = true;      // true = mensajes extra en el Monitor Serie para probar la conexión Bluetooth
 
 BLEServer* servidor;
 BLECharacteristic* chEstado;
@@ -53,12 +54,15 @@ unsigned long hastaMs = 0;
 String idActual = "";             // dosis en curso o la última terminada
 String estadoFinal = "L";               // último estado final, para responder órdenes repetidas
 unsigned long ultimoAviso = 0;
+unsigned long ultimoLatido = 0;   // para el mensaje de depuración cada 5 s
+int conexiones = 0;               // cuántas veces se conectó un celular desde que arrancó
 
 void bomba(int i, bool prendida) {
   digitalWrite(PIN_BOMBA[i], prendida == RELE_ACTIVO_BAJO ? LOW : HIGH);
 }
 
 void enviar(const String& s) {
+  if (DEBUG_BLE) { Serial.print("[DEBUG] -> app: "); Serial.println(s); }
   chEstado->setValue((uint8_t*)s.c_str(), s.length());
   if (conectado) chEstado->notify();
 }
@@ -76,7 +80,7 @@ void terminar(const char* como) {
 }
 
 class AlConectar : public BLEServerCallbacks {
-  void onConnect(BLEServer*) override { conectado = true; recienConectado = true; }
+  void onConnect(BLEServer*) override { conectado = true; recienConectado = true; conexiones++; }
   void onDisconnect(BLEServer* s) override {
     conectado = false;
     s->startAdvertising();              // vuelve a anunciarse para el siguiente celular
@@ -152,6 +156,10 @@ void setup() {
   Serial.println("[INICIO] CleanDose arrancando. Rele apagado.");
 
   BLEDevice::init("CleanDose");
+  if (DEBUG_BLE) {
+    Serial.print("[DEBUG] Direccion Bluetooth del ESP32: ");
+    Serial.println(BLEDevice::getAddress().toString().c_str());
+  }
   servidor = BLEDevice::createServer();
   servidor->setCallbacks(new AlConectar());
   BLEService* servicio = servidor->createService(SERVICIO);
@@ -166,6 +174,11 @@ void setup() {
   anuncio->setScanResponse(true);
   BLEDevice::startAdvertising();
   Serial.println("[OK] Bluetooth listo. Busca 'CleanDose' desde la app.");
+  if (DEBUG_BLE) {
+    Serial.println("[DEBUG] Anunciando el servicio 7f3a0001-... con el nombre 'CleanDose'.");
+    Serial.println("[DEBUG] En el celular (Chrome): Conectar maquina. Si no aparece, usa 'Ver todos los dispositivos'.");
+    Serial.println("[DEBUG] Para comprobar sin la app: instala 'nRF Connect' y busca 'CleanDose'.");
+  }
 }
 
 void loop() {
@@ -184,7 +197,19 @@ void loop() {
 
   if (hayOrden) {
     hayOrden = false;
+    if (DEBUG_BLE) { Serial.print("[DEBUG] <- app: "); Serial.println(orden); }
     procesar(orden);
+  }
+
+  if (DEBUG_BLE && millis() - ultimoLatido >= 5000) {
+    ultimoLatido = millis();
+    if (conectado) {
+      Serial.print("[DEBUG] Celular conectado (conexion numero ");
+      Serial.print(conexiones);
+      Serial.println("). Esperando ordenes.");
+    } else {
+      Serial.println("[DEBUG] Anunciando como 'CleanDose', esperando que un celular se conecte...");
+    }
   }
 
   if (activo >= 0) {
