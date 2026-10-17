@@ -244,7 +244,7 @@
   main.desliza { overflow-y: auto; }
 
   .inferior { flex: none; display: flex; justify-content: space-around; padding: 8px 6px 12px; border-top: 1px solid var(--linea); background: var(--blanco); }
-  .inferior a { display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 76px; color: var(--tinta-suave); text-decoration: none; font-size: 0.78rem; font-weight: 600; }
+  .inferior a { display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 76px; color: var(--tinta-suave); text-decoration: none; font-size: 0.78rem; font-weight: 500; }
   .inferior a.activo { color: var(--azul); font-weight: 700; }
   .nav-icono { position: relative; display: grid; }
   .globo { position: absolute; top: -6px; right: -10px; min-width: 20px; height: 20px; padding: 0 5px; display: grid; place-items: center; border-radius: 10px; background: var(--alerta); color: #fff; font-size: 0.72rem; font-weight: 700; border: 2px solid var(--blanco); }

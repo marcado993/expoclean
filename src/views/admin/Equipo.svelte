@@ -93,7 +93,7 @@
   .filas { display: flex; flex-direction: column; background: var(--blanco); border: 1px solid var(--linea); border-radius: 12px; }
   .fila { display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 0 6px 0 14px; border-bottom: 1px solid var(--linea); }
   .o-nombre { flex: 1; font-weight: 700; }
-  .o-dato { font-size: 0.85rem; color: var(--tinta-suave); font-weight: 600; }
+  .o-dato { font-size: 0.85rem; color: var(--tinta-suave); font-weight: 500; }
   .quitar { width: 44px; height: 44px; display: grid; place-items: center; border: 0; background: none; color: var(--tinta-tenue); cursor: pointer; border-radius: var(--radio); }
   .vacio-txt { margin: 0; padding: 14px; color: var(--tinta-suave); }
 </style>

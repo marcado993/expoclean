@@ -71,7 +71,7 @@
     {#each MARCAS as v}
       {#if v % (f.paso * 2) === 0}
         {@const ym = y(v / f.capacidad)}
-        <text x={f.der(ym) + 8} y={ym + 4} text-anchor="start" font-size="13" font-weight="600" fill="#4D5A66" font-family="Lexend, sans-serif">{v} {f.unidad}</text>
+        <text x={f.der(ym) + 8} y={ym + 4} text-anchor="start" font-size="13" font-weight="600" fill="#4D5A66" font-family="Figtree, sans-serif">{v} {f.unidad}</text>
       {/if}
     {/each}
   {/if}

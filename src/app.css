@@ -41,7 +41,7 @@
   --radio: 12px;
   --radio-tarjeta: 16px;
   --sombra: 0 1px 2px rgb(15 30 58 / 0.05), 0 4px 16px rgb(15 30 58 / 0.06);
-  --fuente: 'Lexend', 'Segoe UI', system-ui, sans-serif;
+  --fuente: 'Figtree', 'Segoe UI', system-ui, sans-serif;
   color-scheme: light;
 }
 * { box-sizing: border-box; }

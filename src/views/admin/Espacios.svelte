@@ -373,7 +373,7 @@
   .zonas { flex: none; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
   .zona-op {
     display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 10px; cursor: pointer;
-    border: 1.5px solid var(--linea); font-size: 0.85rem; font-weight: 600; color: var(--tinta);
+    border: 1.5px solid var(--linea); font-size: 0.85rem; font-weight: 500; color: var(--tinta);
   }
   .zona-op .muestra { flex: none; width: 14px; height: 14px; border-radius: 4px; background: var(--zc); }
   .zona-op.activo { border-color: var(--zc); background: color-mix(in srgb, var(--zc) 8%, white); }
@@ -406,8 +406,8 @@
   .cuarto { cursor: pointer; }
   .sin-plano { display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; padding: 16px; max-width: 32ch; }
   .sin-plano p { margin: 0; color: var(--tinta-suave); line-height: 1.45; }
-  .error { color: var(--alerta) !important; font-weight: 600; }
-  .ayuda { flex: none; margin: 0; min-height: 1.3em; font-size: 0.88rem; font-weight: 600; color: var(--verde-700); text-align: center; }
+  .error { color: var(--alerta) !important; font-weight: 500; }
+  .ayuda { flex: none; margin: 0; min-height: 1.3em; font-size: 0.88rem; font-weight: 500; color: var(--verde-700); text-align: center; }
   .herramientas { flex: none; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
   .herramienta { padding: 0 6px; font-size: 0.88rem; cursor: pointer; }
   .herramienta input { position: absolute; opacity: 0; width: 0; height: 0; }
@@ -431,7 +431,7 @@
 
   .dos { flex: none; display: grid; grid-template-columns: 1fr 84px; gap: 8px; }
   .campo { display: flex; flex-direction: column; gap: 3px; font-weight: 700; font-size: 0.8rem; color: var(--tinta-suave); }
-  .campo input { height: 44px; padding: 0 12px; border-radius: 10px; font-size: 1rem; font-weight: 600; color: var(--tinta); border: 1.5px solid var(--linea); background: #fff; }
+  .campo input { height: 44px; padding: 0 12px; border-radius: 10px; font-size: 1rem; font-weight: 500; color: var(--tinta); border: 1.5px solid var(--linea); background: #fff; }
   .campo input:focus { border-color: var(--verde-500); outline: none; }
 
   input[type='radio'] { position: absolute; opacity: 0; pointer-events: none; }
@@ -439,7 +439,7 @@
   .tipo { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--verde-700); padding: 6px 1px; border-radius: 10px; cursor: pointer; font-size: 0.72rem; font-weight: 700; border: 1.5px solid var(--linea); }
   .tipo.activo { border-color: var(--verde-600); background: var(--verde-50); }
   .tipo:has(input:focus-visible), .nivel:has(input:focus-visible) { outline: 3px solid var(--agua); }
-  .leyenda { flex: none; margin-bottom: -4px; font-weight: 600; font-size: 0.8rem; color: var(--tinta-suave); }
+  .leyenda { flex: none; margin-bottom: -4px; font-weight: 500; font-size: 0.8rem; color: var(--tinta-suave); }
   .suciedad { flex: none; display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
   .nivel { text-align: center; padding: 9px 2px; border-radius: 10px; cursor: pointer; font-size: 0.92rem; font-weight: 700; border: 1.5px solid var(--linea); color: var(--tinta-suave); }
   .nivel.activo { border-color: var(--c); color: #fff; background: var(--c); }

@@ -120,7 +120,7 @@
   .z-texto { flex: 1; min-width: 0; display: flex; flex-direction: column; color: var(--tinta); }
   .z-texto small { font-size: 0.8rem; color: var(--tinta-suave); }
   .z-texto strong { font-size: 1.15rem; font-weight: 700; }
-  .z-m2 { color: var(--tinta-suave); font-weight: 600; }
+  .z-m2 { color: var(--tinta-suave); font-weight: 500; }
   .cambiar { font-size: 0.85rem; font-weight: 700; }
 
   .sub { flex: none; margin: 2px 0 0; font-weight: 700; font-size: 1rem; }
@@ -144,7 +144,7 @@
   .azul strong { color: var(--azul-oscuro); }
   .total { flex: none; justify-content: center; background: var(--t-azul); color: var(--i-azul); }
   .total strong { font-size: 1.3rem; font-weight: 700; color: var(--tinta); }
-  .falta { flex: none; margin: 0; padding: 12px; border-radius: var(--radio); background: var(--t-rojo); color: #8A1F1F; font-weight: 600; }
+  .falta { flex: none; margin: 0; padding: 12px; border-radius: var(--radio); background: var(--t-rojo); color: #8A1F1F; font-weight: 500; }
 
   .continuar { flex: none; width: 100%; height: 56px; margin-top: auto; }
   .continuar.inactivo { opacity: 0.4; pointer-events: none; }

@@ -49,7 +49,7 @@
     width: 100%; font-size: 0.85rem; font-weight: 700; line-height: 1.15; min-height: 2.3em;
     display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
   }
-  .sin .nombre { color: var(--tinta-tenue); font-weight: 600; }
-  .tipo { margin-top: -4px; font-size: 0.75rem; font-weight: 600; color: var(--tinta-suave); }
+  .sin .nombre { color: var(--tinta-tenue); font-weight: 500; }
+  .tipo { margin-top: -4px; font-size: 0.75rem; font-weight: 500; color: var(--tinta-suave); }
   @media (prefers-reduced-motion: reduce) { .liquido { transition: none; } }
 </style>

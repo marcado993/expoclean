@@ -173,10 +173,10 @@
 <style>
   .panel { display: flex; flex-direction: column; gap: 12px; padding-bottom: 8px; }
   .pestañas { display: grid; grid-template-columns: repeat(4, auto); gap: 4px; }
-  .pestañas button { height: 44px; padding: 0 8px; border: 0; border-radius: 10px; background: none; cursor: pointer; font-weight: 600; color: var(--tinta-suave); font-size: 0.92rem; }
+  .pestañas button { height: 44px; padding: 0 8px; border: 0; border-radius: 10px; background: none; cursor: pointer; font-weight: 500; color: var(--tinta-suave); font-size: 0.92rem; }
   .pestañas button.activa { background: var(--azul); color: #fff; font-weight: 700; }
   .rango { position: relative; display: flex; align-items: center; gap: 10px; height: 48px; padding: 0 12px; border: 1px solid var(--linea); border-radius: var(--radio); color: var(--tinta); }
-  .rango select { flex: 1; height: 100%; border: 0; background: none; appearance: none; font-weight: 600; cursor: pointer; }
+  .rango select { flex: 1; height: 100%; border: 0; background: none; appearance: none; font-weight: 500; cursor: pointer; }
 
   .kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .kpi { display: flex; flex-direction: column; gap: 2px; padding: 14px; border: 1px solid var(--linea); border-radius: var(--radio-tarjeta); background: var(--blanco); text-align: left; font: inherit; color: var(--tinta); }
@@ -200,7 +200,7 @@
   h2 { margin: 0; font-size: 1.2rem; font-weight: 700; letter-spacing: -0.015em; }
   .ver { border: 0; background: none; color: var(--azul); font-weight: 700; cursor: pointer; }
   .tabla { width: 100%; border-collapse: collapse; font-size: 0.8rem; table-layout: fixed; }
-  .tabla th { padding: 8px 4px; text-align: left; font-weight: 600; color: var(--tinta-suave); background: var(--superficie-2); }
+  .tabla th { padding: 8px 4px; text-align: left; font-weight: 500; color: var(--tinta-suave); background: var(--superficie-2); }
   .tabla th:first-child, .tabla td:first-child { width: 22%; padding-left: 8px; }
   .tabla th:last-child { width: 15%; }
   .tabla td { padding: 9px 4px; border-bottom: 1px solid var(--linea); vertical-align: top; overflow-wrap: anywhere; }
