@@ -1,4 +1,5 @@
 <script>
+  import Icono3D from '../../components/Icono3D.svelte';
   // Escanear área: foto del lugar + zona + tipo de limpieza → dosificación recomendada.
   // Los m² vienen del espacio que registró el administrador (con su croquis o a mano).
   import { fly } from 'svelte/transition';
@@ -6,6 +7,7 @@
   import { dur, tic } from '../../lib/movimiento.js';
   import { datos, espacioPorId } from '../../lib/nube.svelte.js';
   import { recomendar, TIPOS_LIMPIEZA, PRODUCTOS, RECIPIENTES } from '../../lib/catalogo.js';
+  import { RECIPIENTE_3D } from '../../lib/ui.js';
 
   let { params = {} } = $props();
 
@@ -25,7 +27,7 @@
   }
   $effect(() => () => foto && URL.revokeObjectURL(foto));
 
-  const ml = (x) => (x >= 1000 ? `${x / 1000} L` : `${x} ml`);
+  const ml = (x) => (x >= 1000 ? `${+(x / 1000).toFixed(1)} L` : `${x} ml`);
   const litros = (x) => (x >= 1000 ? `${x / 1000} ${x === 1000 ? 'Litro' : 'Litros'}` : `${x} ml`);
   const continuar = $derived(
     receta?.compartimento ? `#op/dosificar?e=${espacioId}&tl=${tipo}${params.t ? `&t=${params.t}` : ''}` : null
@@ -67,7 +69,7 @@
     <div class="tipos" role="radiogroup" aria-label="Tipo de limpieza">
       {#each Object.entries(TIPOS_LIMPIEZA) as [k, t]}
         <button class="tipo" class:elegido={tipo === k} role="radio" aria-checked={tipo === k} onclick={() => { tic(); tipo = k; }}>
-          <Icono nombre={t.icono} size={26} trazo={1.9} />
+          <Icono3D nombre={{ diaria: 'brillo', profunda: 'burbujas', desinfeccion: 'escudo' }[k]} size={30} />
           <span>{t.nombre}</span>
         </button>
       {/each}
@@ -77,11 +79,11 @@
     {#if receta.compartimento}
       {#key tipo}
       <div class="dosis" in:fly={{ y: 10, duration: dur(240) }}>
-        <div class="cifra rosa"><Icono nombre="botella" size={30} trazo={1.8} /><span><small>Producto</small><strong>{ml(receta.ml_producto)}</strong></span></div>
-        <div class="cifra azul"><Icono nombre="gota" size={30} trazo={1.8} /><span><small>Agua</small><strong>{ml(receta.ml_agua)}</strong></span></div>
+        <div class="cifra rosa"><Icono3D nombre="botella" size={34} /><span><small>Producto</small><strong>{ml(receta.ml_producto)}</strong></span></div>
+        <div class="cifra azul"><Icono3D nombre="gota" size={34} /><span><small>Agua</small><strong>{ml(receta.ml_agua)}</strong></span></div>
       </div>
       <div class="total">
-        <Icono nombre={receta.recipiente} size={30} trazo={1.8} />
+        <Icono3D nombre={RECIPIENTE_3D[receta.recipiente]} size={36} />
         <span><small>{`Total en ${RECIPIENTES[receta.recipiente].nombre.toLowerCase()} con ${PRODUCTOS[receta.productoId].nombre}`}</small><strong>{litros(receta.total_ml)}{receta.cargas > 1 ? ` × ${receta.cargas}` : ''}</strong></span>
       </div>
       {/key}

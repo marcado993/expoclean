@@ -1,8 +1,9 @@
 <script>
+  import Icono3D from '../../components/Icono3D.svelte';
   // Zonas: los espacios que creó el administrador. Tocar uno = escanear esa área.
   import Icono from '../../components/Icono.svelte';
   import { datos, sesion } from '../../lib/nube.svelte.js';
-  import { ZONAS, zonaDe } from '../../lib/ui.js';
+  import { ZONAS, zonaDe, SUPERFICIE_3D, RECIPIENTE_3D } from '../../lib/ui.js';
 
   const POR_PAGINA = 7;
   let pagina = $state(0);
@@ -19,7 +20,7 @@
     {#each datos.espacios.slice(pagina * POR_PAGINA, (pagina + 1) * POR_PAGINA) as e (e.id)}
       {@const z = ZONAS[zonaDe(e)]}
       <a class="fila" href="#op/escanear?e={e.id}">
-        <span class="cuadro" style="background:{z.color}; color:{z.tinta}"><Icono nombre={e.superficie} size={20} trazo={2} /></span>
+        <span class="cuadro" style="background:color-mix(in srgb, {z.color} 16%, white)"><Icono3D nombre={SUPERFICIE_3D[e.superficie]} size={30} /></span>
         <span class="f-texto"><strong>{e.nombre}</strong><small>{e.area_m2} m², {z.nombre}</small></span>
         {#if mia(e.id)}<span class="marca">Tarea</span>{/if}
         <Icono nombre="derecha" size={20} trazo={2} />

@@ -1,4 +1,5 @@
 <script>
+  import Icono3D from './Icono3D.svelte';
   // Seguridad de un producto en un vistazo: rombo NFPA, pictogramas de peligro y qué ponerse.
   import { scale } from 'svelte/transition';
   import { backOut } from 'svelte/easing';
@@ -10,7 +11,7 @@
 
   let { producto, compacto = false } = $props();
   const s = $derived(SEGURIDAD[producto]);
-  const EPP = { guantes: ['guantes', 'Guantes'], gafas: ['gafas', 'Gafas'], mascarilla: ['mascarilla', 'Mascarilla'] };
+  const EPP = { guantes: ['guantes', 'Guantes', true], gafas: ['gafas', 'Gafas', true], mascarilla: ['mascarilla', 'Mascarilla', false] };
 </script>
 
 {#if s}
@@ -23,7 +24,7 @@
       <span class="separa" aria-hidden="true"></span>
       {#each s.epp as e, i}
         <span class="epp" title={EPP[e][1]} in:scale={{ start: 0.5, delay: dur(200 + i * 70), duration: dur(300), easing: backOut }}>
-          <Icono nombre={EPP[e][0]} size={22} trazo={2} /><small>{EPP[e][1]}</small>
+          {#if EPP[e][2]}<Icono3D nombre={EPP[e][0]} size={28} />{:else}<Icono nombre={EPP[e][0]} size={22} trazo={2} />{/if}<small>{EPP[e][1]}</small>
         </span>
       {/each}
     {/if}

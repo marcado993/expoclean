@@ -1,10 +1,11 @@
 <script>
+  import Icono3D from '../../components/Icono3D.svelte';
   // Administrador: trazabilidad de la limpieza. Resumen, zonas, operarios y alertas.
   import Icono from '../../components/Icono.svelte';
   import { datos, espacioPorId, operarioPorId } from '../../lib/nube.svelte.js';
   import { stock, porEspacio, porOperario } from '../../lib/traza.js';
   import { PRODUCTOS } from '../../lib/catalogo.js';
-  import { ZONAS, zonaDe } from '../../lib/ui.js';
+  import { ZONAS, zonaDe, SUPERFICIE_3D, RECIPIENTE_3D } from '../../lib/ui.js';
 
   let pestaña = $state('resumen');
   let dias = $state(7);
@@ -81,7 +82,7 @@
         <span class="nota">Promedio por semana</span>
       </div>
       <button class="kpi roja" onclick={() => (pestaña = 'alertas')}>
-        <span class="k-icono rojo"><Icono nombre="peligro" size={24} trazo={2} /></span>
+        <span class="k-icono rojo"><Icono3D nombre="peligro" size={28} /></span>
         <small>Zonas sin limpiar</small>
         <strong class="rojo-txt">{sinLimpiar.length}</strong>
         <span class="enlace">Ver detalles</span>
@@ -126,7 +127,7 @@
       {#each zonas as z (z.espacio.id)}
         {@const zc = ZONAS[zonaDe(z.espacio)]}
         <div class="fila">
-          <span class="cuadro" style="background:{zc.color}; color:{zc.tinta}"><Icono nombre={z.espacio.superficie} size={18} trazo={2} /></span>
+          <span class="cuadro" style="background:color-mix(in srgb, {zc.color} 16%, white)"><Icono3D nombre={SUPERFICIE_3D[z.espacio.superficie]} size={26} /></span>
           <span class="f-texto">
             <strong>{z.espacio.nombre}</strong>
             <small class:rojo-txt={!z.ultima}>{cuando(z.ultima)}, {z.limpiezas} limpiezas{z.sinProducto.length ? `, sin ${z.sinProducto.map((p) => PRODUCTOS[p]?.nombre).join(', ')}` : ''}</small>

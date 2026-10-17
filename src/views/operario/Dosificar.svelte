@@ -1,4 +1,5 @@
 <script>
+  import Icono3D from '../../components/Icono3D.svelte';
   // Dosificación: tocar el lugar → la máquina llena (por Bluetooth). Se puede detener.
   // La receta (compartimento, recipiente y mL) sale sola del lugar (lib/catalogo.js → recomendar).
   // Desde Escanear área (?e=<lugar>&tl=<tipo>) arranca sola si la máquina ya está conectada.
@@ -12,7 +13,7 @@
   import { api } from '../../lib/api.js';
   import { maquina, dosificarBLE, detener, registrar, NoSePudo } from '../../lib/ble.svelte.js';
   import { PRODUCTOS, RECIPIENTES, COLOR_COMPARTIMENTO, mlProducto, recomendar, liquidoDe, segundosPara } from '../../lib/catalogo.js';
-  import { ZONAS, zonaDe } from '../../lib/ui.js';
+  import { ZONAS, zonaDe, SUPERFICIE_3D, RECIPIENTE_3D } from '../../lib/ui.js';
   import { dur, tic } from '../../lib/movimiento.js';
 
   let { params = {} } = $props();
@@ -109,7 +110,7 @@
     'sin producto': () => 'No hay producto cargado',
     error: () => 'La máquina no respondió',
   };
-  const ml = (x) => (x >= 1000 ? `${x / 1000} L` : `${x} ml`);
+  const ml = (x) => (x >= 1000 ? `${+(x / 1000).toFixed(1)} L` : `${x} ml`);
   // Sin scroll: los lugares se reparten el alto disponible (2 columnas; 3 si son muchos).
   const columnas = $derived(datos.espacios.length > 10 ? 3 : 2);
   const filas = $derived(Math.max(1, Math.ceil(datos.espacios.length / columnas)));
@@ -131,7 +132,7 @@
         {@const z = ZONAS[zonaDe(e)]}
         <button class="lugar" style="--zc:{z.color}" onclick={() => llenar(e)} disabled={!maquina.conectada}
           in:fly={{ y: 18, delay: dur(i * 35), duration: dur(260) }}>
-          <span class="cuadro" style="background:{z.color}; color:{z.tinta}"><Icono nombre={e.superficie} size={24} trazo={1.9} /></span>
+          <span class="cuadro"><Icono3D nombre={SUPERFICIE_3D[e.superficie]} size={38} /></span>
           <span class="l-nombre">{e.nombre}</span>
         </button>
       {/each}
@@ -142,7 +143,7 @@
       {#if receta}
         <span class="chips">
           <span class="chip" style="--cc:{COLOR_COMPARTIMENTO[receta.compartimento - 1]}"><span class="pto"></span>{PRODUCTOS[receta.productoId]?.nombre}</span>
-          <span class="chip"><Icono nombre={receta.recipiente} size={16} trazo={2} />{ml(RECIPIENTES[receta.recipiente].capacidad)}</span>
+          <span class="chip"><Icono3D nombre={RECIPIENTE_3D[receta.recipiente]} size={20} />{ml(RECIPIENTES[receta.recipiente].capacidad)}</span>
         </span>
         <Seguridad producto={receta.productoId} />
       {/if}
@@ -204,10 +205,10 @@
   }
   .lugar:active:not(:disabled) { transform: scale(0.95); box-shadow: none; }
   .lugar:disabled { cursor: default; }
-  .cuadro { flex: none; display: grid; place-items: center; width: 42px; height: 42px; border-radius: 12px; }
+  .cuadro { flex: none; display: grid; place-items: center; width: 50px; height: 50px; border-radius: 14px; background: var(--blanco); }
   .l-nombre { font-size: 1rem; font-weight: 700; line-height: 1.15; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
   .tres .l-nombre { font-size: 0.88rem; }
-  .tres .cuadro { width: 34px; height: 34px; }
+  .tres .cuadro { width: 40px; height: 40px; }
 
   .cabeza { flex: none; display: flex; flex-direction: column; gap: 8px; }
   .chips { display: flex; flex-wrap: wrap; gap: 6px; }

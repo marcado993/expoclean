@@ -64,3 +64,7 @@ export const GLIFOS = {
   izquierda: 'M15 5l-7 7 7 7',
   derecha: 'M9 5l7 7-7 7',
 };
+
+/** Ícono 3D (public/iconos3d) de cada tipo de superficie y de cada recipiente. */
+export const SUPERFICIE_3D = { bano: 'inodoro', sanitario: 'destapador', piso: 'escoba', vidrio: 'ventana', mesa: 'esponja' };
+export const RECIPIENTE_3D = { balde: 'balde', botella: 'botella', spray: 'botella' };

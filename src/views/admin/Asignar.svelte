@@ -1,11 +1,12 @@
 <script>
+  import Icono3D from '../../components/Icono3D.svelte';
   // Asignar operario a una zona: "se regó algo en el Laboratorio 2" → elegir el espacio,
   // tocar Mandar a limpiar, y el operario más libre recibe el aviso en su celular.
   import Icono from '../../components/Icono.svelte';
   import { datos, espacioPorId, operarioPorId } from '../../lib/nube.svelte.js';
   import { api, nuevoId } from '../../lib/api.js';
   import { operarioMasLibre } from '../../lib/traza.js';
-  import { ZONAS, zonaDe } from '../../lib/ui.js';
+  import { ZONAS, zonaDe, SUPERFICIE_3D, RECIPIENTE_3D } from '../../lib/ui.js';
 
   let { params = {} } = $props();
   let pestaña = $state('nueva');
@@ -70,7 +71,7 @@
         {#each visibles as e (e.id)}
           {@const z = ZONAS[zonaDe(e)]}
           <button class="espacio" class:elegido={espacioId === e.id} aria-pressed={espacioId === e.id} onclick={() => { espacioId = e.id; resultado = ''; }}>
-            <span class="cuadro" style="background:{z.color}; color:{z.tinta}"><Icono nombre={e.superficie} size={18} trazo={2} /></span>
+            <span class="cuadro" style="background:color-mix(in srgb, {z.color} 16%, white)"><Icono3D nombre={SUPERFICIE_3D[e.superficie]} size={26} /></span>
             <span class="e-nombre">{e.nombre}</span>
           </button>
         {/each}

@@ -1,4 +1,5 @@
 <script>
+  import Icono3D from '../../components/Icono3D.svelte';
   // Notificaciones: las zonas que el administrador me mandó a limpiar.
   import Icono from '../../components/Icono.svelte';
   import { datos, sesion, espacioPorId } from '../../lib/nube.svelte.js';
@@ -29,7 +30,7 @@
   <div class="lista">
     {#each pendientes.slice(0, 3) as t (t.id)}
       <div class="tarea">
-        <span class="icono"><Icono nombre="peligro" size={24} trazo={2} /></span>
+        <span class="icono"><Icono3D nombre="peligro" size={30} /></span>
         <div class="t-cuerpo">
           <strong>Limpiar {espacioPorId(t.espacioId)?.nombre ?? 'espacio borrado'}</strong>
           <small>{t.nota || 'Asignada por el administrador'}, {hace(t.fecha)}</small>

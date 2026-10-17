@@ -1,4 +1,5 @@
 <script>
+  import Icono3D from '../../components/Icono3D.svelte';
   import Icono from '../../components/Icono.svelte';
   // Administrador: crea los espacios que aparecen en la app. Tres formas: escribir, dictar, o dibujar sobre el croquis.
   // Todo se guarda en el servidor.
@@ -6,7 +7,7 @@
   import { datos } from '../../lib/nube.svelte.js';
   import { api } from '../../lib/api.js';
   import { calcularDosis, SUPERFICIES, SUCIEDAD, PRODUCTOS, RECIPIENTES } from '../../lib/dosis.js';
-  import { CATEGORIAS, SUCIEDAD_COLOR, ZONAS, zonaDe } from '../../lib/ui.js';
+  import { CATEGORIAS, SUCIEDAD_COLOR, ZONAS, zonaDe, SUPERFICIE_3D, RECIPIENTE_3D } from '../../lib/ui.js';
   import { interpretarLugar, crearOyente } from '../../lib/intencion.js';
   import { cargarImagen, puntoSvg } from '../../lib/croquis.js';
   import Ficha from '../../components/Ficha.svelte';
@@ -181,7 +182,7 @@
         {@const k = CATEGORIAS[a.superficie]}
         <div class="fila-caja" style="height:{ALTO_FILA}px">
         <button class="fila" onclick={() => abrir(a)}>
-          <span class="azulejo" style="--c:{ZONAS[zonaDe(a)].color}; --t:{ZONAS[zonaDe(a)].tinta}"><Icono nombre={a.superficie} size={24} trazo={1.8} /></span>
+          <span class="azulejo" style="--c:color-mix(in srgb, {ZONAS[zonaDe(a)].color} 16%, white)"><Icono3D nombre={SUPERFICIE_3D[a.superficie]} size={32} /></span>
           <span class="dato"><strong>{a.nombre}</strong><span>{resumen(a)}</span></span>
           {#if a.croquis}<span class="etiqueta-mapa" title="Dibujado en el croquis"><Icono nombre="mapa" size={16} /></span>{/if}
           <span class="chevron"><Icono nombre="derecha" size={20} /></span>
@@ -309,7 +310,7 @@
         {#each Object.entries(SUPERFICIES) as [k, s]}
           <label class="tipo" class:activo={hoja.form.superficie === k}>
             <input type="radio" bind:group={hoja.form.superficie} value={k} />
-            <Icono nombre={k} size={26} trazo={1.5} />
+            <Icono3D nombre={SUPERFICIE_3D[k]} size={30} />
             <span>{s.nombre}</span>
           </label>
         {/each}

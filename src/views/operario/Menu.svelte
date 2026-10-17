@@ -1,4 +1,5 @@
 <script>
+  import Icono3D from '../../components/Icono3D.svelte';
   // Menú del operario: lo que más se usa (Dosificar) es lo más grande. Íconos y una palabra.
   import { fly } from 'svelte/transition';
   import Icono from '../../components/Icono.svelte';
@@ -10,9 +11,9 @@
   const tarea = $derived(datos.tareas.findLast((t) => t.operarioId === sesion.operarioId && t.estado === 'pendiente'));
 
   const OTRAS = [
-    { ruta: 'op/escanear', titulo: 'Escanear', icono: 'escanear', tinte: 'verde' },
-    { ruta: 'op/config', titulo: 'Configurar', icono: 'ajustes', tinte: 'azul' },
-    { ruta: 'op/historial', titulo: 'Historial', icono: 'historial', tinte: 'morado' },
+    { ruta: 'op/escanear', titulo: 'Escanear', icono3d: 'lupa', tinte: 'verde' },
+    { ruta: 'op/config', titulo: 'Configurar', icono3d: 'engrane', tinte: 'azul' },
+    { ruta: 'op/historial', titulo: 'Historial', icono3d: 'portapapeles', tinte: 'morado' },
   ];
 </script>
 
@@ -29,7 +30,7 @@
 
   <a class="principal" href="#op/dosificar" onclick={() => tic()} in:fly={{ y: 16, delay: dur(60), duration: dur(300) }}>
     <span class="burbujas" aria-hidden="true"><i></i><i></i><i></i></span>
-    <span class="gota"><Icono nombre="gota" size={54} trazo={1.9} /></span>
+    <span class="gota"><Icono3D nombre="gota" size={72} /></span>
     <strong>Dosificar</strong>
     <span class="estado-maq" class:lista={maquina.conectada}>
       <Icono nombre={maquina.conectada ? 'bt-conectado' : 'bluetooth'} size={16} trazo={2.2} />
@@ -41,7 +42,7 @@
     {#each OTRAS as o, i}
       <a class="otra" href="#{o.ruta}" onclick={() => tic()} style="--t:var(--t-{o.tinte}); --i:var(--i-{o.tinte})"
         in:fly={{ y: 16, delay: dur(120 + i * 60), duration: dur(300) }}>
-        <span class="icono"><Icono nombre={o.icono} size={32} trazo={1.9} /></span>
+        <span class="icono"><Icono3D nombre={o.icono3d} size={42} /></span>
         <strong>{o.titulo}</strong>
       </a>
     {/each}
