@@ -70,6 +70,24 @@
     location.hash = '#inicio';
   }
 
+  // Interruptor de arriba: Operario ⇄ Admin en un toque. Al volver se queda con el mismo operario.
+  function cambiarModo(modo) {
+    if (ui.ocupado || modo === sesion.rol) return;
+    navigator.vibrate?.(12);
+    if (modo === 'admin') {
+      if (sesion.operarioId) sesion.ultimoOperario = sesion.operarioId;
+      sesion.rol = 'admin';
+      sesion.operarioId = null;
+      location.hash = '#admin';
+    } else if (sesion.ultimoOperario && datos.operarios.some((o) => o.id === sesion.ultimoOperario)) {
+      sesion.rol = 'operario';
+      sesion.operarioId = sesion.ultimoOperario;
+      location.hash = '#op';
+    } else {
+      salir(); // nunca eligió operario en este celular: que elija su nombre
+    }
+  }
+
   // Si quitaron al operario de este celular, vuelve a elegir quién es.
   $effect(() => {
     if (datos.cargado && sesion.rol === 'operario' && !operarioActual()) salir();
@@ -132,10 +150,15 @@
     <Logo />
     {#if sesion.rol}
       <Maquina />
-      <button class="rol" onclick={() => (esAdmin ? (cajon = !cajon) : (location.hash = '#op/perfil'))} disabled={ui.ocupado}
-        aria-label={esAdmin ? 'Administrador' : `Perfil de ${operarioActual()?.nombre ?? 'operario'}`}>
-        <span class="avatar">{esAdmin ? 'A' : (operarioActual()?.nombre ?? '?').split(' ').map((p) => p[0]).join('').slice(0, 2)}</span>
-      </button>
+      <div class="modo" role="radiogroup" aria-label="Modo">
+        <span class="pastilla" class:derecha={sesion.rol === 'admin'} aria-hidden="true"></span>
+        <button role="radio" aria-checked={sesion.rol === 'operario'} aria-label="Modo operario" disabled={ui.ocupado} onclick={() => cambiarModo('operario')}>
+          <Icono nombre="usuario" size={20} trazo={2.2} />
+        </button>
+        <button role="radio" aria-checked={sesion.rol === 'admin'} aria-label="Modo administrador" disabled={ui.ocupado} onclick={() => cambiarModo('admin')}>
+          <Icono nombre="portapapeles" size={20} trazo={2.2} />
+        </button>
+      </div>
     {/if}
   </header>
 
@@ -207,8 +230,12 @@
   .barra { flex: none; display: flex; align-items: center; gap: 8px; height: 68px; padding: 0 14px 0 16px; }
   .barra :global(.logo) { margin-right: auto; }
   .icono-btn { margin-left: -8px; width: 44px; height: 44px; display: grid; place-items: center; border: 0; border-radius: 50%; background: none; color: var(--tinta); cursor: pointer; }
-  .rol { padding: 0; border: 0; background: none; cursor: pointer; }
-  .avatar { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: var(--tinta); color: #fff; font-weight: 700; font-size: 0.95rem; }
+  .modo { position: relative; flex: none; display: grid; grid-template-columns: 1fr 1fr; padding: 3px; border-radius: 999px; background: var(--superficie-2); border: 1px solid var(--linea); }
+  .modo button { position: relative; z-index: 1; width: 40px; height: 36px; display: grid; place-items: center; border: 0; border-radius: 999px; background: none; cursor: pointer; color: var(--tinta-tenue); transition: color 0.2s ease; }
+  .modo button[aria-checked='true'] { color: #fff; }
+  .pastilla { position: absolute; top: 3px; left: 3px; width: 40px; height: 36px; border-radius: 999px; background: var(--azul); transition: transform 0.25s cubic-bezier(0.3, 1.4, 0.5, 1); }
+  .pastilla.derecha { transform: translateX(40px); }
+  @media (prefers-reduced-motion: reduce) { .pastilla, .modo button { transition: none; } }
   .vista { height: 100%; }
 
   .sin-red { flex: none; margin: 0; padding: 8px 16px; background: var(--t-rojo); color: #8A1F1F; font-weight: 700; font-size: 0.9rem; }
