@@ -55,7 +55,18 @@ import i_nuevo_usuario from '@tabler/icons/outline/user-plus.svg?raw';
 import i_enviar from '@tabler/icons/outline/send.svg?raw';
 import i_regla2 from '@tabler/icons/outline/ruler-2.svg?raw';
 
+import i_bluetooth from '@tabler/icons/outline/bluetooth.svg?raw';
+import i_sin_bluetooth from '@tabler/icons/outline/bluetooth-off.svg?raw';
+import i_bt_conectado from '@tabler/icons/outline/bluetooth-connected.svg?raw';
+import i_parar from '@tabler/icons/outline/player-stop.svg?raw';
+import i_cargando from '@tabler/icons/outline/loader-2.svg?raw';
+
 export const ICONOS = {
+  'bluetooth': i_bluetooth,
+  'sin-bluetooth': i_sin_bluetooth,
+  'bt-conectado': i_bt_conectado,
+  'parar': i_parar,
+  'cargando': i_cargando,
   'escanear': i_escanear,
   'historial': i_historial,
   'campana': i_campana,

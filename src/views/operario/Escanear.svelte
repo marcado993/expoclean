@@ -1,7 +1,9 @@
 <script>
   // Escanear área: foto del lugar + zona + tipo de limpieza → dosificación recomendada.
   // Los m² vienen del espacio que registró el administrador (con su croquis o a mano).
+  import { fly } from 'svelte/transition';
   import Icono from '../../components/Icono.svelte';
+  import { dur, tic } from '../../lib/movimiento.js';
   import { datos, espacioPorId } from '../../lib/nube.svelte.js';
   import { recomendar, TIPOS_LIMPIEZA, PRODUCTOS, RECIPIENTES } from '../../lib/catalogo.js';
 
@@ -32,8 +34,7 @@
 
 <div class="escanear">
   <div>
-    <h1 class="titulo">{espacio ? 'Área escaneada' : 'Escanear área'}</h1>
-    <p class="bajada">Revisa el área y selecciona el tipo de limpieza.</p>
+    <h1 class="titulo">{espacio ? 'Área escaneada' : '¿Qué área?'}</h1>
   </div>
 
   <label class="foto" class:con-foto={foto}>
@@ -65,7 +66,7 @@
     <p class="sub">Tipo de limpieza</p>
     <div class="tipos" role="radiogroup" aria-label="Tipo de limpieza">
       {#each Object.entries(TIPOS_LIMPIEZA) as [k, t]}
-        <button class="tipo" class:elegido={tipo === k} role="radio" aria-checked={tipo === k} onclick={() => (tipo = k)}>
+        <button class="tipo" class:elegido={tipo === k} role="radio" aria-checked={tipo === k} onclick={() => { tic(); tipo = k; }}>
           <Icono nombre={t.icono} size={26} trazo={1.9} />
           <span>{t.nombre}</span>
         </button>
@@ -74,7 +75,8 @@
 
     <p class="sub">Dosificación recomendada</p>
     {#if receta.compartimento}
-      <div class="dosis">
+      {#key tipo}
+      <div class="dosis" in:fly={{ y: 10, duration: dur(240) }}>
         <div class="cifra rosa"><Icono nombre="botella" size={30} trazo={1.8} /><span><small>Producto</small><strong>{ml(receta.ml_producto)}</strong></span></div>
         <div class="cifra azul"><Icono nombre="gota" size={30} trazo={1.8} /><span><small>Agua</small><strong>{ml(receta.ml_agua)}</strong></span></div>
       </div>
@@ -82,6 +84,7 @@
         <Icono nombre={receta.recipiente} size={30} trazo={1.8} />
         <span><small>{`Total en ${RECIPIENTES[receta.recipiente].nombre.toLowerCase()} con ${PRODUCTOS[receta.productoId].nombre}`}</small><strong>{litros(receta.total_ml)}{receta.cargas > 1 ? ` × ${receta.cargas}` : ''}</strong></span>
       </div>
+      {/key}
     {:else}
       <p class="falta">No hay {receta.falta.toLowerCase()} cargado. Cárgalo en <a href="#op/config">Configuración</a>.</p>
     {/if}
@@ -126,6 +129,8 @@
     height: 74px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer;
     border: 1.5px solid var(--linea); border-radius: var(--radio); background: var(--blanco); color: var(--tinta-suave); font-weight: 700; font-size: 0.82rem;
   }
+  .tipo { transition: transform 0.12s ease, background 0.15s ease; }
+  .tipo:active { transform: scale(0.95); }
   .tipo.elegido { border: 2px solid var(--verde-marca); background: var(--t-verde); color: var(--verde-oscuro); }
 
   .dosis { flex: none; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }

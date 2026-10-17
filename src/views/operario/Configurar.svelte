@@ -93,7 +93,7 @@
 
   <p class="info"><Icono nombre="info" size={22} trazo={2} /> Esta configuración se guarda en el servidor: todos ven lo mismo.</p>
   {#if error}<p class="error">{error}</p>{:else if mensaje}<p class="ok">{mensaje}</p>{/if}
-  <button class="boton guardar" onclick={guardar} disabled={!cambiado || guardando || !!datos.maquina.dosis}>
+  <button class="boton guardar" onclick={guardar} disabled={!cambiado || guardando || ui.ocupado}>
     {guardando ? 'Guardando…' : 'Guardar configuración'}
   </button>
 </div>

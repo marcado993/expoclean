@@ -19,6 +19,8 @@
 //                                          los segundos de bomba salen de ml_producto y el caudal (CAUDAL_ML_S)
 //                                          una a la vez (409 ocupado), idempotente por id
 //   GET  /api/dosis/:id                    { estado, resta_ms }
+//   POST /api/registros                    { id, fecha, compartimento, operarioId, espacioId, recipiente, ml_producto, tipoLimpieza, parcial? }
+//                                          dosis hecha por Bluetooth (el celular la anota). Idempotente por id.
 //   POST /api/operarios                    { nombre }  ·  DELETE /api/operarios/:id
 // ESP32 (cabecera X-Token):
 //   GET  /api/esp32/orden?espera=20        204 sin orden, o { id, compartimento, segundos }
@@ -290,6 +292,26 @@ ruta('POST', '/api/dosis', async (req, res) => {
   };
   cambio();
   responder(res, 200, estado.maquina.dosis);
+});
+
+ruta('POST', '/api/registros', async (req, res) => {
+  const b = await leerCuerpo(req);
+  if (!b.id) return fallo(res, 400, 'Falta id');
+  if (estado.registros.some((r) => r.id === b.id)) return responder(res, 200, { ok: true, repetido: true });
+  const n = Number(b.compartimento);
+  if (!(n >= 1 && n <= N_COMPARTIMENTOS)) return fallo(res, 400, 'Compartimento inválido');
+  const c = estado.compartimentos[n - 1];
+  const ml = Math.max(0, Math.min(Number(b.ml_producto) || 0, 2000, c.nivel_ml));
+  const fecha = !Number.isNaN(Date.parse(b.fecha)) && Date.parse(b.fecha) <= Date.now() + 60000 ? new Date(b.fecha).toISOString() : new Date().toISOString();
+  c.nivel_ml -= ml;
+  estado.registros.push({
+    id: String(b.id).slice(0, 40), fecha, operarioId: b.operarioId ?? null, espacioId: b.espacioId ?? null,
+    productoId: c.producto, compartimento: n, recipiente: RECIPIENTES[b.recipiente] ? b.recipiente : 'spray',
+    ml_producto: ml, tipoLimpieza: b.tipoLimpieza ?? null, estado: 'hecha', canal: 'bluetooth', ...(b.parcial ? { parcial: true } : {}),
+  });
+  if (estado.registros.length > MAX_REGISTROS) estado.registros.splice(0, estado.registros.length - MAX_REGISTROS);
+  cambio();
+  responder(res, 200, { ok: true });
 });
 
 ruta('GET', '/api/dosis/:id', (req, res, { p }) => {

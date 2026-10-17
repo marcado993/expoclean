@@ -1,217 +1,201 @@
-// CleanDose — firmware ESP32
+// CleanDose — firmware ESP32 por BLUETOOTH (BLE)
 //
-// El ESP32 SOLO prende bombas. Todo lo demás (compartimentos, tareas, registros) vive en el
-// servidor. El ESP32 se conecta al Wi-Fi del lugar y le pregunta al servidor si hay una orden:
+// El ESP32 solo prende bombas. La app (Chrome en Android) se conecta por Bluetooth, manda la
+// orden y guarda el registro en el servidor con el internet del celular. El ESP32 NO necesita Wi-Fi.
 //
-//   GET  http://SERVIDOR/api/esp32/orden?espera=20   → 204 nada, o {id, compartimento, segundos}
-//   POST http://SERVIDOR/api/esp32/estado            → {id, estado: dosificando | hecha | error}
-//
-// La pregunta queda abierta hasta 20 s (long polling): la orden llega al instante sin saturar
-// al ESP32 ni a la red. Una dosis a la vez; si llega la misma orden dos veces, no repite.
+// Mensajes cortos (caben en 20 bytes):
+//   App → ESP32 (característica ORDEN, escribir):
+//     G;<id>;<compartimento>;<segundos>   dosificar      ej. G;k3x9q2ab;1;12
+//     S;<id>                              detener esa dosis
+//   ESP32 → App (característica ESTADO, notificar y leer):
+//     L                     libre
+//     D;<id>;<resta_ms>     dosificando (se repite cada medio segundo)
+//     H;<id>                hecha
+//     P;<id>                parada por el operario
+//     O;<resta_ms>          ocupado con otra dosis
+//     E;<id>                orden inválida
+//   Una dosis a la vez. Si llega la misma orden dos veces (mismo id), no se repite.
 //
 // Conexión AHORA (un solo relé y una bomba): los 4 compartimentos prenden el GPIO 22.
 //   Relé: IN → GPIO 22 · VCC → VIN (5 V) · GND → GND · bomba en COM / NO con su fuente.
-// Cuando haya 4 bombas, cambia PIN_BOMBA a {22, 21, 19, 18} (un relé por compartimento).
+// Cuando haya 4 bombas, cambia PIN_BOMBA a {22, 21, 19, 18}.
 //
-// Librería: ArduinoJson (v7) desde el Library Manager.
+// No necesita librerías extra: usa el Bluetooth que ya trae el ESP32 en el Arduino IDE.
 //
-// LED azul de la placa (para saber en qué paso va, sin computadora):
-//   parpadeo rápido continuo ...... buscando el Wi-Fi
-//   2 parpadeos largos ............ no se pudo conectar al Wi-Fi (nombre/clave, o red de 5 GHz)
-//   3 parpadeos largos ............ conectó al Wi-Fi pero el TOKEN no coincide con el servidor
-//   5 parpadeos cortos ............ conectó al Wi-Fi pero no llega al servidor (sin internet o portal de login)
-//   4 parpadeos y queda PRENDIDO .. conectado al servidor: la app ya lo ve
-// En el Monitor Serie (115200 baudios) sale lo mismo en texto.
+// LED azul de la placa:
+//   parpadeo lento ............ esperando que un celular se conecte
+//   4 parpadeos y fijo ........ celular conectado
+// Monitor Serie (115200): [INICIO] [OK] [ORDEN] [ERROR] en cada paso.
 
-#include <WiFi.h>
-#include <HTTPClient.h>
-#include <ArduinoJson.h>
+#include <BLEDevice.h>
+#include <BLEServer.h>
+#include <BLE2902.h>
 
-// ── Cambia esto ──────────────────────────────────────────
-const char* WIFI_SSID = "TU_WIFI";
-const char* WIFI_PASS = "TU_CLAVE";
-const char* SERVIDOR  = "http://149.130.170.232:8080";
-const char* TOKEN     = "cambiar-token";     // igual que CLEANDOSE_TOKEN en el servidor
-// ─────────────────────────────────────────────────────────
+#define SERVICIO "7f3a0001-5c2e-4b8a-9f1d-3c6e2a1b4d00"
+#define ORDEN    "7f3a0002-5c2e-4b8a-9f1d-3c6e2a1b4d00"
+#define ESTADO   "7f3a0003-5c2e-4b8a-9f1d-3c6e2a1b4d00"
 
 const int N = 4;
 const int PIN_BOMBA[N] = {22, 22, 22, 22};   // por ahora todos al mismo relé
-const bool RELE_ACTIVO_BAJO = false;         // tu módulo se activa con HIGH: apagado = LOW. Si queda prendido solo, pon true
+const bool RELE_ACTIVO_BAJO = false;         // tu módulo se activa con HIGH. Si queda prendido solo, pon true
 const long SEG_MAX = 120;
-const int PIN_LED = 2;                       // LED azul de la placa
+const int PIN_LED = 2;
 
-String ultimaId = "";                        // última orden ejecutada (no se repite)
-bool enLinea = false;                        // ¿el último contacto con el servidor salió bien?
+BLEServer* servidor;
+BLECharacteristic* chEstado;
+volatile bool conectado = false;
+volatile bool recienConectado = false;
+volatile bool hayOrden = false;
+String orden = "";
+
+int activo = -1;                  // compartimento dosificando (0..3) o -1
+unsigned long hastaMs = 0;
+String idActual = "";             // dosis en curso o la última terminada
+String estadoFinal = "L";               // último estado final, para responder órdenes repetidas
+unsigned long ultimoAviso = 0;
 
 void bomba(int i, bool prendida) {
   digitalWrite(PIN_BOMBA[i], prendida == RELE_ACTIVO_BAJO ? LOW : HIGH);
 }
 
-void apagarTodo() {
-  for (int i = 0; i < N; i++) bomba(i, false);
+void enviar(const String& s) {
+  chEstado->setValue((uint8_t*)s.c_str(), s.length());
+  if (conectado) chEstado->notify();
 }
 
-void parpadear(int veces, int ms) {
-  for (int i = 0; i < veces; i++) {
-    digitalWrite(PIN_LED, HIGH); delay(ms);
-    digitalWrite(PIN_LED, LOW);  delay(ms);
+long restaMs() { return activo >= 0 ? max(0L, (long)(hastaMs - millis())) : 0; }
+
+void terminar(const char* como) {
+  bomba(activo, false);
+  Serial.print("[ORDEN] Bomba OFF (");
+  Serial.print(como[0] == 'H' ? "dosis terminada" : "detenida desde la app");
+  Serial.println(")");
+  activo = -1;
+  estadoFinal = String(como) + ";" + idActual;
+  enviar(estadoFinal);
+}
+
+class AlConectar : public BLEServerCallbacks {
+  void onConnect(BLEServer*) override { conectado = true; recienConectado = true; }
+  void onDisconnect(BLEServer* s) override {
+    conectado = false;
+    s->startAdvertising();              // vuelve a anunciarse para el siguiente celular
   }
-  delay(600);
-}
+};
 
-// Cuando el Wi-Fi no conecta: ¿la red se ve? Si no aparece, casi siempre es de 5 GHz o está lejos.
-void diagnosticarWifi() {
-  Serial.println("Redes que ve el ESP32 (solo ve las de 2.4 GHz):");
-  int n = WiFi.scanNetworks();
-  bool vista = false;
+class AlEscribir : public BLECharacteristicCallbacks {
+  void onWrite(BLECharacteristic* c) override {
+    orden = String(c->getValue().c_str());
+    hayOrden = true;                    // se procesa en loop(), no aquí
+  }
+};
+
+// Separa "G;id;1;12" en partes.
+String parte(const String& s, int n) {
+  int desde = 0;
   for (int i = 0; i < n; i++) {
-    Serial.print("  ");
-    Serial.print(WiFi.SSID(i));
-    Serial.print("  (");
-    Serial.print(WiFi.RSSI(i));
-    Serial.println(" dBm)");
-    if (WiFi.SSID(i) == WIFI_SSID) vista = true;
+    desde = s.indexOf(';', desde) + 1;
+    if (desde == 0) return "";
   }
-  if (!vista) {
-    Serial.print(">> No veo la red '");
-    Serial.print(WIFI_SSID);
-    Serial.println("'. Debe ser de 2.4 GHz (no 5 GHz) y con el nombre exacto.");
-  } else {
-    Serial.println(">> La red se ve: revisa la CLAVE (distingue mayúsculas).");
-  }
-  WiFi.scanDelete();
+  int hasta = s.indexOf(';', desde);
+  return hasta < 0 ? s.substring(desde) : s.substring(desde, hasta);
 }
 
-void conectarWifi() {
-  if (WiFi.status() == WL_CONNECTED) return;
-  enLinea = false;
-  Serial.print("Conectando a '");
-  Serial.print(WIFI_SSID);
-  Serial.print("'");
-  WiFi.begin(WIFI_SSID, WIFI_PASS);
-  for (int i = 0; i < 40 && WiFi.status() != WL_CONNECTED; i++) {
-    digitalWrite(PIN_LED, i % 2);            // parpadeo rápido mientras busca
-    delay(250);
-    Serial.print(".");
-  }
-  digitalWrite(PIN_LED, LOW);
-  if (WiFi.status() == WL_CONNECTED) {
-    Serial.println();
-    Serial.print("[OK] WIFI CONECTADO. IP ");
-    Serial.print(WiFi.localIP());
-    Serial.print(", señal ");
-    Serial.print(WiFi.RSSI());
-    Serial.println(" dBm");
-  } else {
-    Serial.println();
-    Serial.println("[ERROR] WIFI NO CONECTA.");
-    parpadear(2, 700);
-    diagnosticarWifi();
-  }
-}
-
-// Anuncia por el LED y el Monitor Serie el resultado de hablar con el servidor.
-void resultadoServidor(int codigo) {
-  bool ok = codigo == 200 || codigo == 204;
-  if (ok && !enLinea) {
-    Serial.println("==============================================");
-    Serial.println("[OK] CONECTADO AL SERVIDOR CLEANDOSE");
-    Serial.print("     ");
-    Serial.println(SERVIDOR);
-    Serial.println("     La app ya ve la maquina. Toca un lugar en la app.");
-    Serial.println("==============================================");
-    parpadear(4, 150);                       // las 4 luces de "conectado"
-  } else if (ok) {
-    Serial.print("[OK] CONECTADO, esperando ordenes de la app (señal ");
-    Serial.print(WiFi.RSSI());
-    Serial.println(" dBm)");
-  }
-  if (!ok) {
-    if (codigo == 401) {
-      Serial.println("[ERROR] El servidor rechazo el TOKEN: debe ser igual a CLEANDOSE_TOKEN del servidor.");
-      parpadear(3, 700);
-    } else {
-      Serial.print("[ERROR] No llego al servidor (codigo ");
-      Serial.print(codigo);
-      Serial.println("). Este Wi-Fi tiene internet? Pide inicio de sesion?");
-      parpadear(5, 120);
-    }
-  }
-  enLinea = ok;
-  digitalWrite(PIN_LED, ok ? HIGH : LOW);
-}
-
-bool avisar(const String& id, const char* estado) {
-  HTTPClient http;
-  http.begin(String(SERVIDOR) + "/api/esp32/estado");
-  http.setTimeout(5000);
-  http.addHeader("Content-Type", "application/json");
-  http.addHeader("X-Token", TOKEN);
-  int codigo = http.POST("{\"id\":\"" + id + "\",\"estado\":\"" + estado + "\"}");
-  http.end();
-  return codigo == 200;
-}
-
-void dosificar(const String& id, int compartimento, long segundos) {
-  if (id == ultimaId) {                      // orden repetida: solo confirmar
-    avisar(id, "hecha");
+void procesar(const String& o) {
+  String tipo = parte(o, 0);
+  String id = parte(o, 1);
+  if (tipo == "S") {
+    if (activo >= 0 && id == idActual) terminar("P");
     return;
   }
-  if (compartimento < 1 || compartimento > N || segundos < 1 || segundos > SEG_MAX) {
-    avisar(id, "error");
+  if (tipo != "G" || id.length() == 0) return;
+
+  if (id == idActual) {                 // la misma orden otra vez: no se repite
+    if (activo >= 0) enviar("D;" + id + ";" + String(restaMs()));
+    else enviar(estadoFinal);
     return;
   }
-  ultimaId = id;
-  avisar(id, "dosificando");
+  if (activo >= 0) {
+    enviar("O;" + String(restaMs()));
+    return;
+  }
+  int c = parte(o, 2).toInt();
+  long seg = parte(o, 3).toInt();
+  if (c < 1 || c > N || seg < 1 || seg > SEG_MAX) {
+    Serial.print("[ERROR] Orden invalida: ");
+    Serial.println(o);
+    enviar("E;" + id);
+    return;
+  }
+  idActual = id;
+  activo = c - 1;
+  hastaMs = millis() + seg * 1000UL;
+  bomba(activo, true);
   Serial.print("[ORDEN] Bomba ");
-  Serial.print(compartimento);
+  Serial.print(c);
   Serial.print(" ON por ");
-  Serial.print(segundos);
+  Serial.print(seg);
   Serial.println(" s");
-  bomba(compartimento - 1, true);
-  unsigned long fin = millis() + segundos * 1000UL;
-  while ((long)(fin - millis()) > 0) delay(20);   // la bomba se apaga aunque se caiga el Wi-Fi
-  bomba(compartimento - 1, false);
-  Serial.println("[ORDEN] Bomba OFF, dosis terminada");
-
-  for (int intento = 0; intento < 5 && !avisar(id, "hecha"); intento++) delay(1000);
+  enviar("D;" + id + ";" + String(restaMs()));
+  ultimoAviso = millis();
 }
 
 void setup() {
   Serial.begin(115200);
   for (int i = 0; i < N; i++) {
-    bomba(i, false);                         // antes de pinMode: no hace clic al arrancar
+    bomba(i, false);                    // antes de pinMode: no hace clic al arrancar
     pinMode(PIN_BOMBA[i], OUTPUT);
   }
-  apagarTodo();
   pinMode(PIN_LED, OUTPUT);
-  delay(500);
+  delay(300);
   Serial.println();
   Serial.println("[INICIO] CleanDose arrancando. Rele apagado.");
-  WiFi.mode(WIFI_STA);
-  WiFi.setSleep(false);
-  WiFi.setAutoReconnect(true);
-  conectarWifi();
+
+  BLEDevice::init("CleanDose");
+  servidor = BLEDevice::createServer();
+  servidor->setCallbacks(new AlConectar());
+  BLEService* servicio = servidor->createService(SERVICIO);
+  BLECharacteristic* chOrden = servicio->createCharacteristic(ORDEN, BLECharacteristic::PROPERTY_WRITE);
+  chOrden->setCallbacks(new AlEscribir());
+  chEstado = servicio->createCharacteristic(ESTADO, BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_NOTIFY);
+  chEstado->addDescriptor(new BLE2902());
+  chEstado->setValue("L");
+  servicio->start();
+  BLEAdvertising* anuncio = BLEDevice::getAdvertising();
+  anuncio->addServiceUUID(SERVICIO);
+  anuncio->setScanResponse(true);
+  BLEDevice::startAdvertising();
+  Serial.println("[OK] Bluetooth listo. Busca 'CleanDose' desde la app.");
 }
 
 void loop() {
-  conectarWifi();
-  if (WiFi.status() != WL_CONNECTED) { delay(3000); return; }
-
-  HTTPClient http;
-  http.begin(String(SERVIDOR) + "/api/esp32/orden?espera=20");
-  http.setTimeout(25000);                    // un poco más que la espera del servidor
-  http.addHeader("X-Token", TOKEN);
-  int codigo = http.GET();
-  resultadoServidor(codigo);
-
-  if (codigo == 200) {
-    JsonDocument orden;
-    DeserializationError e = deserializeJson(orden, http.getString());
-    http.end();
-    if (!e) dosificar(orden["id"] | "", orden["compartimento"] | 0, orden["segundos"] | 0);
-  } else {
-    http.end();
-    if (codigo != 204) delay(codigo == 401 ? 10000 : 2000);   // 204 = conectado, sin órdenes
+  if (recienConectado) {
+    recienConectado = false;
+    Serial.println("==============================================");
+    Serial.println("[OK] CELULAR CONECTADO POR BLUETOOTH");
+    Serial.println("     Toca un lugar en la app para dosificar.");
+    Serial.println("==============================================");
+    for (int i = 0; i < 4; i++) { digitalWrite(PIN_LED, HIGH); delay(120); digitalWrite(PIN_LED, LOW); delay(120); }
+    enviar(activo >= 0 ? "D;" + idActual + ";" + String(restaMs()) : "L");
   }
+  static bool estabaConectado = false;
+  if (estabaConectado && !conectado) Serial.println("[INFO] Celular desconectado. Esperando otro...");
+  estabaConectado = conectado;
+
+  if (hayOrden) {
+    hayOrden = false;
+    procesar(orden);
+  }
+
+  if (activo >= 0) {
+    if ((long)(millis() - hastaMs) >= 0) terminar("H");   // se apaga sola aunque el celular se desconecte
+    else if (millis() - ultimoAviso >= 500) {
+      enviar("D;" + idActual + ";" + String(restaMs()));
+      ultimoAviso = millis();
+    }
+  }
+
+  // LED: fijo si hay celular conectado, parpadeo lento si espera.
+  digitalWrite(PIN_LED, conectado ? HIGH : (millis() / 700) % 2);
+  delay(10);
 }

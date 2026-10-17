@@ -1,6 +1,7 @@
 <script>
   import Icono from '../../components/Icono.svelte';
   import { datos, sesion, operarioActual } from '../../lib/nube.svelte.js';
+  import { maquina, cola } from '../../lib/ble.svelte.js';
 
   const yo = $derived(operarioActual());
   const mias = $derived(datos.registros.filter((r) => r.operarioId === sesion.operarioId));
@@ -25,7 +26,8 @@
   <dl class="datos">
     <div><dt>Dosis registradas</dt><dd>{mias.length}</dd></div>
     <div><dt>Tareas hechas</dt><dd>{hechas}</dd></div>
-    <div><dt>Máquina</dt><dd class:ok={datos.maquina.enLinea}>{datos.maquina.enLinea ? 'Conectada' : 'Desconectada'}</dd></div>
+    <div><dt>Máquina</dt><dd class:ok={maquina.conectada}>{maquina.conectada ? 'Conectada' : 'Sin conectar'}</dd></div>
+    <div><dt>Por enviar al servidor</dt><dd>{cola.pendientes}</dd></div>
   </dl>
 
   <button class="boton secundario salir" onclick={salir}><Icono nombre="salir" size={20} /> Cambiar de usuario</button>

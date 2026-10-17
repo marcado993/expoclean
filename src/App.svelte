@@ -14,9 +14,15 @@
   import Espacios from './views/admin/Espacios.svelte';
   import Asignar from './views/admin/Asignar.svelte';
   import Equipo from './views/admin/Equipo.svelte';
+  import Maquina from './components/Maquina.svelte';
+  import { fly } from 'svelte/transition';
   import { datos, sesion, ui, conectar, operarioActual, espacioPorId } from './lib/nube.svelte.js';
+  import { reconectarSola, vaciarCola } from './lib/ble.svelte.js';
+  import { dur } from './lib/movimiento.js';
 
   conectar();
+  reconectarSola();
+  vaciarCola();
 
   const RUTAS = {
     inicio: Inicio,
@@ -125,10 +131,10 @@
     {/if}
     <Logo />
     {#if sesion.rol}
-      <button class="rol" onclick={() => (esAdmin ? (cajon = !cajon) : (location.hash = '#op/perfil'))} disabled={ui.ocupado}>
-        <span class="avatar"><Icono nombre="usuario" size={16} trazo={2} /></span>
-        {esAdmin ? 'Administrador' : 'Operario'}
-        <Icono nombre="abajo" size={16} trazo={2.2} />
+      <Maquina />
+      <button class="rol" onclick={() => (esAdmin ? (cajon = !cajon) : (location.hash = '#op/perfil'))} disabled={ui.ocupado}
+        aria-label={esAdmin ? 'Administrador' : `Perfil de ${operarioActual()?.nombre ?? 'operario'}`}>
+        <span class="avatar">{esAdmin ? 'A' : (operarioActual()?.nombre ?? '?').split(' ').map((p) => p[0]).join('').slice(0, 2)}</span>
       </button>
     {/if}
   </header>
@@ -139,7 +145,9 @@
 
   <main class:desliza={esAdmin}>
     {#key actual.clave}
-      <Vista params={actual.params} />
+      <div class="vista" in:fly={{ x: 24, duration: dur(220) }}>
+        <Vista params={actual.params} />
+      </div>
     {/key}
   </main>
 
@@ -199,11 +207,9 @@
   .barra { flex: none; display: flex; align-items: center; gap: 8px; height: 68px; padding: 0 14px 0 16px; }
   .barra :global(.logo) { margin-right: auto; }
   .icono-btn { margin-left: -8px; width: 44px; height: 44px; display: grid; place-items: center; border: 0; border-radius: 50%; background: none; color: var(--tinta); cursor: pointer; }
-  .rol {
-    display: flex; align-items: center; gap: 6px; height: 40px; padding: 0 10px 0 5px; cursor: pointer;
-    border: 1px solid var(--linea); border-radius: 999px; background: var(--superficie-2); font-weight: 600; font-size: 0.9rem; color: var(--tinta);
-  }
-  .avatar { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: #5B6478; color: #fff; }
+  .rol { padding: 0; border: 0; background: none; cursor: pointer; }
+  .avatar { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: var(--tinta); color: #fff; font-weight: 800; font-size: 0.95rem; }
+  .vista { height: 100%; }
 
   .sin-red { flex: none; margin: 0; padding: 8px 16px; background: var(--t-rojo); color: #8A1F1F; font-weight: 700; font-size: 0.9rem; }
 

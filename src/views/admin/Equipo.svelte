@@ -1,8 +1,11 @@
 <script>
-  // Equipo: la máquina (conexión y prueba de bomba) y la lista de operarios.
+  // Máquina (Bluetooth) y lista de operarios.
   import Icono from '../../components/Icono.svelte';
+  import Maquina from '../../components/Maquina.svelte';
   import { datos, ui } from '../../lib/nube.svelte.js';
-  import { api, probarBomba, NoSePudo } from '../../lib/api.js';
+  import { api } from '../../lib/api.js';
+  import { maquina, dosificarBLE, NoSePudo } from '../../lib/ble.svelte.js';
+  import { tic } from '../../lib/movimiento.js';
 
   let nombre = $state('');
   let error = $state('');
@@ -25,17 +28,17 @@
     await api.quitarOperario(o.id).catch((err) => (error = err.message));
   }
 
+  // Prueba del relé: 3 s en el compartimento 1, sin registrar ni descontar producto.
   async function probar() {
+    tic(20);
     probando = true;
     ui.ocupado = true;
-    prueba = 'Mandando la orden…';
+    prueba = 'Bomba encendida…';
     try {
-      await probarBomba(1, 3);
+      await dosificarBLE({ compartimento: 1, segundos: 3 });
       prueba = 'La bomba se prendió 3 s y se apagó.';
     } catch (e) {
-      prueba = e instanceof NoSePudo && e.motivo === 'ocupado' ? 'La máquina está dosificando. Prueba en un momento.'
-        : e instanceof NoSePudo && e.motivo === 'desconectada' ? 'La máquina no está conectada al servidor.'
-        : 'La máquina no respondió.';
+      prueba = e instanceof NoSePudo && e.motivo === 'ocupado' ? 'La máquina está ocupada.' : 'La máquina no respondió.';
     } finally {
       probando = false;
       ui.ocupado = false;
@@ -45,18 +48,8 @@
 
 <div class="equipo">
   <h1 class="titulo">Máquina y operarios</h1>
-  <section class="maquina" class:ok={datos.maquina.enLinea}>
-    <span class="luz" aria-hidden="true"></span>
-    <div class="m-texto">
-      <h2>{datos.maquina.enLinea ? 'Máquina conectada' : 'Máquina desconectada'}</h2>
-      <p>
-        {#if !datos.conectado}Sin conexión con el servidor.
-        {:else if datos.maquina.enLinea}{datos.maquina.dosis ? 'Dosificando ahora.' : 'Lista para dosificar.'}
-        {:else}Revisa que el ESP32 tenga corriente y Wi-Fi.{/if}
-      </p>
-    </div>
-  </section>
-  <button class="boton probar" onclick={probar} disabled={probando || !datos.maquina.enLinea}>
+  <Maquina grande />
+  <button class="boton probar" onclick={probar} disabled={probando || !maquina.conectada}>
     <Icono nombre="rayo" size={22} trazo={2.2} /> Probar bomba 3 s
   </button>
   {#if prueba}<p class="prueba">{prueba}</p>{/if}

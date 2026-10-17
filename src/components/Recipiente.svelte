@@ -3,7 +3,8 @@
   // nivel y objetivo van de 0 a 1 respecto a la capacidad.
   import { mezclar } from '../lib/ui.js';
 
-  let { tipo = 'spray', nivel = 0, objetivo = 0, liquido = '#9fd0c0', abierto = false, marcas = true, color = '#3b4641' } = $props();
+  // ola = el líquido se mueve (mientras se llena): superficie ondulada y burbujas que suben.
+  let { tipo = 'spray', nivel = 0, objetivo = 0, liquido = '#9fd0c0', abierto = false, marcas = true, color = '#3b4641', ola = false } = $props();
   const id = $props.id();
 
   const FORMAS = {
@@ -44,8 +45,16 @@
 
   <g clip-path="url(#int-{id})">
     <g class="nivel" style="transform: translateY({ySup}px)" opacity={nivel > 0.001 ? 1 : 0}>
-      <rect x="0" y="0" width="200" height="300" fill={liquido} />
-      <line x1="0" x2="200" y1="0" y2="0" stroke={linea} stroke-width="2" />
+      {#if ola}
+        <path class="ola atras" d="M-200 0 q25 -7 50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 V300 H-200 Z" fill={linea} opacity="0.35" />
+        <path class="ola" d="M-200 4 q25 -9 50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 V300 H-200 Z" fill={liquido} />
+        {#each [[70, 0], [100, 0.7], [125, 1.3], [88, 1.9], [112, 2.4]] as [x, retraso]}
+          <circle class="burbuja" cx={x} cy="120" r="3.5" fill="#fff" opacity="0.7" style="animation-delay:{retraso}s" />
+        {/each}
+      {:else}
+        <rect x="0" y="0" width="200" height="300" fill={liquido} />
+        <line x1="0" x2="200" y1="0" y2="0" stroke={linea} stroke-width="2" />
+      {/if}
     </g>
     {#if marcas}
       {#each MARCAS as v}
@@ -87,5 +96,10 @@
   .recipiente { width: 100%; height: auto; display: block; overflow: visible; }
   /* El nivel sube suave mientras llena: es la única animación, porque informa. */
   .nivel { transition: transform 0.3s linear; }
-  @media (prefers-reduced-motion: reduce) { .nivel { transition: none; } }
+  .ola { animation: ola 1.6s linear infinite; }
+  .ola.atras { animation-duration: 2.4s; animation-direction: reverse; }
+  @keyframes ola { to { transform: translateX(100px); } }
+  .burbuja { animation: sube 2.6s ease-in infinite; }
+  @keyframes sube { from { transform: translateY(0); opacity: 0.8; } to { transform: translateY(-110px); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .nivel { transition: none; } .ola, .burbuja { animation: none; } }
 </style>
