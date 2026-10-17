@@ -176,7 +176,7 @@ void loop() {
     Serial.println("     Toca un lugar en la app para dosificar.");
     Serial.println("==============================================");
     for (int i = 0; i < 4; i++) { digitalWrite(PIN_LED, HIGH); delay(120); digitalWrite(PIN_LED, LOW); delay(120); }
-    enviar(activo >= 0 ? "D;" + idActual + ";" + String(restaMs()) : "L");
+    enviar(activo >= 0 ? String("D;") + idActual + ";" + String(restaMs()) : String("L"));
   }
   static bool estabaConectado = false;
   if (estabaConectado && !conectado) Serial.println("[INFO] Celular desconectado. Esperando otro...");
