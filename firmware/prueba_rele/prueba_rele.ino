@@ -10,7 +10,7 @@
 #include <WebServer.h>
 
 const int PIN_RELE = 22;
-const bool RELE_ACTIVO_BAJO = false;         // tu módulo se activa con HIGH: apagado = LOW. Si queda prendido solo, pon true
+const bool RELE_ACTIVO_BAJO = true;         // true = se activa con señal baja. Si el foco verde queda prendido solo, pon false
 const long PULSO_SEG = 3;              // si la app no dice cuánto
 const long MAX_SEG = 120;
 

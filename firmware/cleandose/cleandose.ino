@@ -37,7 +37,11 @@
 
 const int N = 4;
 const int PIN_BOMBA[N] = {22, 22, 22, 22};   // por ahora todos al mismo relé
-const bool RELE_ACTIVO_BAJO = false;         // tu módulo se activa con HIGH. Si queda prendido solo, pon true
+// El foco verde del relé debe estar APAGADO en reposo y prenderse solo al dosificar.
+// true  = el módulo se activa con señal BAJA (LOW): en reposo el pin queda en ALTO.
+// false = el módulo se activa con señal ALTA (HIGH): en reposo el pin queda en BAJO.
+// Si el foco verde queda prendido sin hacer nada, cambia este valor al contrario y vuelve a subir.
+const bool RELE_ACTIVO_BAJO = true;
 const long SEG_MAX = 120;
 const int PIN_LED = 2;
 const bool DEBUG_BLE = true;      // true = mensajes extra en el Monitor Serie para probar la conexión Bluetooth
@@ -55,6 +59,7 @@ String idActual = "";             // dosis en curso o la última terminada
 String estadoFinal = "L";               // último estado final, para responder órdenes repetidas
 unsigned long ultimoAviso = 0;
 unsigned long ultimoLatido = 0;   // para el mensaje de depuración cada 5 s
+unsigned long ultimoRepaso = 0;   // última vez que se aseguró el relé apagado
 int conexiones = 0;               // cuántas veces se conectó un celular desde que arrancó
 
 void bomba(int i, bool prendida) {
@@ -153,7 +158,9 @@ void setup() {
   pinMode(PIN_LED, OUTPUT);
   delay(300);
   Serial.println();
-  Serial.println("[INICIO] CleanDose arrancando. Rele apagado.");
+  Serial.print("[INICIO] CleanDose arrancando. Rele apagado (pin 22 en ");
+  Serial.print(RELE_ACTIVO_BAJO ? "ALTO" : "BAJO");
+  Serial.println("). El foco verde debe estar apagado.");
 
   BLEDevice::init("CleanDose");
   if (DEBUG_BLE) {
@@ -210,6 +217,12 @@ void loop() {
     } else {
       Serial.println("[DEBUG] Anunciando como 'CleanDose', esperando que un celular se conecte...");
     }
+  }
+
+  // Siempre verifica: sin dosis en curso, vuelve a dejar todos los relés apagados cada segundo.
+  if (activo < 0 && millis() - ultimoRepaso >= 1000) {
+    ultimoRepaso = millis();
+    for (int i = 0; i < N; i++) bomba(i, false);
   }
 
   if (activo >= 0) {
