@@ -55,7 +55,7 @@
     flex: none; display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: var(--radio-tarjeta);
     background: var(--t-rojo); color: #8A1F1F; text-decoration: none;
   }
-  .tarea strong { flex: 1; font-weight: 800; color: var(--tinta); }
+  .tarea strong { flex: 1; font-weight: 700; color: var(--tinta); }
   .campana { display: grid; animation: timbre 1.6s ease-in-out infinite; transform-origin: top center; }
 
   .principal {
@@ -65,7 +65,7 @@
   }
   .principal:active { transform: scale(0.98); }
   .gota { position: relative; z-index: 1; display: grid; place-items: center; width: 108px; height: 108px; border-radius: 50%; background: var(--blanco); color: var(--i-rosa); box-shadow: 0 10px 30px rgb(236 77 130 / 0.25); }
-  .principal strong { position: relative; z-index: 1; font-size: 1.9rem; font-weight: 800; letter-spacing: -0.02em; }
+  .principal strong { position: relative; z-index: 1; font-size: 1.9rem; font-weight: 700; letter-spacing: -0.02em; }
   .estado-maq { position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 999px; background: rgb(255 255 255 / 0.75); font-size: 0.85rem; font-weight: 700; color: var(--tinta-suave); }
   .estado-maq.lista { color: var(--verde-oscuro); }
   .burbujas i { position: absolute; bottom: -30px; width: 22px; height: 22px; border-radius: 50%; background: rgb(255 255 255 / 0.55); animation: subir 6s linear infinite; }
@@ -80,7 +80,7 @@
   }
   .otra:active { transform: scale(0.95); }
   .icono { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 16px; background: color-mix(in srgb, var(--i) 18%, white); color: var(--i); }
-  .otra strong { font-size: 0.98rem; font-weight: 800; }
+  .otra strong { font-size: 0.98rem; font-weight: 700; }
 
   @keyframes subir { from { transform: translateY(0); opacity: 0; } 15% { opacity: 1; } to { transform: translateY(-380px); opacity: 0; } }
   @keyframes timbre { 0%, 70%, 100% { transform: rotate(0); } 75% { transform: rotate(14deg); } 85% { transform: rotate(-12deg); } 92% { transform: rotate(6deg); } }

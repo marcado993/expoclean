@@ -7,5 +7,5 @@
 
 <style>
   .logo { display: inline-flex; align-items: center; gap: 6px; }
-  .nombre { font-weight: 800; font-size: 1.35rem; letter-spacing: -0.02em; color: var(--verde-marca); }
+  .nombre { font-weight: 700; font-size: 1.35rem; letter-spacing: -0.02em; color: var(--verde-marca); }
 </style>

@@ -60,7 +60,7 @@
       <rect x={x - 7} y="100" width="14" height="12" rx="3" fill="#2B3445" />
       <rect x={x - 2} y="112" width="4" height="8" fill="#9AA6B8" />
       <rect x={x - 8} y="124" width="16" height="18" rx="4" fill="#fff" stroke="#D5DCE6" />
-      <text x={x} y="137" text-anchor="middle" font-size="11" font-weight="800" fill="#0F1E3A">{i + 1}</text>
+      <text x={x} y="137" text-anchor="middle" font-size="11" font-weight="700" fill="#0F1E3A">{i + 1}</text>
     {/each}
   </svg>
 
@@ -108,11 +108,11 @@
   .maquina { flex: 1 1 120px; min-height: 90px; max-height: 170px; width: 100%; }
   .filas { flex: none; display: flex; flex-direction: column; gap: 8px; }
   .fila { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: 1px solid var(--linea); border-radius: var(--radio); background: var(--blanco); }
-  .num { flex: none; display: grid; place-items: center; width: 32px; height: 32px; border: 1px solid var(--linea); border-radius: 8px; font-weight: 800; }
+  .num { flex: none; display: grid; place-items: center; width: 32px; height: 32px; border: 1px solid var(--linea); border-radius: 8px; font-weight: 700; }
   .punto { flex: none; width: 16px; height: 16px; border-radius: 50%; }
   .botella { flex: none; display: grid; }
   .eleccion { position: relative; flex: 1; min-width: 0; display: grid; grid-template-columns: 1fr auto; align-items: center; column-gap: 6px; cursor: pointer; color: var(--tinta-suave); }
-  .e-nombre { grid-column: 1; font-weight: 800; color: var(--tinta); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .e-nombre { grid-column: 1; font-weight: 700; color: var(--tinta); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .e-sub { grid-column: 1; font-size: 0.8rem; }
   .eleccion :global(.icono) { grid-column: 2; grid-row: 1 / 3; }
   .eleccion select { position: absolute; inset: 0; opacity: 0; cursor: pointer; font-size: 16px; }

@@ -208,7 +208,7 @@
   .barra :global(.logo) { margin-right: auto; }
   .icono-btn { margin-left: -8px; width: 44px; height: 44px; display: grid; place-items: center; border: 0; border-radius: 50%; background: none; color: var(--tinta); cursor: pointer; }
   .rol { padding: 0; border: 0; background: none; cursor: pointer; }
-  .avatar { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: var(--tinta); color: #fff; font-weight: 800; font-size: 0.95rem; }
+  .avatar { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: var(--tinta); color: #fff; font-weight: 700; font-size: 0.95rem; }
   .vista { height: 100%; }
 
   .sin-red { flex: none; margin: 0; padding: 8px 16px; background: var(--t-rojo); color: #8A1F1F; font-weight: 700; font-size: 0.9rem; }
@@ -218,9 +218,9 @@
 
   .inferior { flex: none; display: flex; justify-content: space-around; padding: 8px 6px 12px; border-top: 1px solid var(--linea); background: var(--blanco); }
   .inferior a { display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 76px; color: var(--tinta-suave); text-decoration: none; font-size: 0.78rem; font-weight: 600; }
-  .inferior a.activo { color: var(--azul); font-weight: 800; }
+  .inferior a.activo { color: var(--azul); font-weight: 700; }
   .nav-icono { position: relative; display: grid; }
-  .globo { position: absolute; top: -6px; right: -10px; min-width: 20px; height: 20px; padding: 0 5px; display: grid; place-items: center; border-radius: 10px; background: var(--alerta); color: #fff; font-size: 0.72rem; font-weight: 800; border: 2px solid var(--blanco); }
+  .globo { position: absolute; top: -6px; right: -10px; min-width: 20px; height: 20px; padding: 0 5px; display: grid; place-items: center; border-radius: 10px; background: var(--alerta); color: #fff; font-size: 0.72rem; font-weight: 700; border: 2px solid var(--blanco); }
 
   .velo { position: absolute; inset: 0; z-index: 8; border: 0; background: rgb(15 30 58 / 0.35); cursor: pointer; }
   .cajon {
@@ -242,7 +242,7 @@
   }
   .aviso-icono { display: grid; place-items: center; width: 48px; height: 48px; margin-bottom: 6px; border-radius: 14px; background: var(--t-rojo); color: var(--alerta); }
   .aviso-sup { margin: 0; font-weight: 700; color: var(--alerta); }
-  .aviso h2 { margin: 0; font-size: 1.45rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15; }
+  .aviso h2 { margin: 0; font-size: 1.45rem; font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; }
   .aviso-nota { margin: 0; font-size: 1rem; color: var(--tinta-suave); }
   .aviso-botones { display: grid; grid-template-columns: 1fr 1.3fr; gap: 10px; margin-top: 12px; }
   @keyframes baja { from { transform: translateY(-16px); opacity: 0; } }

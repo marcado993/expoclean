@@ -34,19 +34,19 @@
   }
   button.tanque { cursor: pointer; }
   button.tanque:disabled { cursor: default; opacity: 0.45; }
-  .num { font-size: 1.05rem; font-weight: 800; line-height: 1; }
+  .num { font-size: 1.05rem; font-weight: 700; line-height: 1; }
   .cuerpo {
     position: relative; width: 100%; height: var(--alto); overflow: hidden;
     border: 3px solid var(--tinta); border-radius: 10px 10px 14px 14px; background: var(--blanco);
   }
   button.tanque:active:not(:disabled) .cuerpo { transform: translateY(2px); }
   .liquido { position: absolute; left: 0; right: 0; bottom: 0; border-top: 2px solid rgb(20 32 43 / 0.25); transition: height 0.3s linear; }
-  .pct { position: absolute; left: 0; right: 0; top: 6px; font-size: 0.85rem; font-weight: 800; }
+  .pct { position: absolute; left: 0; right: 0; top: 6px; font-size: 0.85rem; font-weight: 700; }
   .vacio .cuerpo { border-color: var(--alerta); }
   .vacio .pct { color: var(--alerta); }
   .sin .cuerpo { border-style: dashed; border-color: var(--tinta-tenue); }
   .nombre {
-    width: 100%; font-size: 0.85rem; font-weight: 800; line-height: 1.15; min-height: 2.3em;
+    width: 100%; font-size: 0.85rem; font-weight: 700; line-height: 1.15; min-height: 2.3em;
     display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
   }
   .sin .nombre { color: var(--tinta-tenue); font-weight: 600; }

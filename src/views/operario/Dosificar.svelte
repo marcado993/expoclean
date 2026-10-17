@@ -205,7 +205,7 @@
   .lugar:active:not(:disabled) { transform: scale(0.95); box-shadow: none; }
   .lugar:disabled { cursor: default; }
   .cuadro { flex: none; display: grid; place-items: center; width: 42px; height: 42px; border-radius: 12px; }
-  .l-nombre { font-size: 1rem; font-weight: 800; line-height: 1.15; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .l-nombre { font-size: 1rem; font-weight: 700; line-height: 1.15; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
   .tres .l-nombre { font-size: 0.88rem; }
   .tres .cuadro { width: 34px; height: 34px; }
 
@@ -233,11 +233,11 @@
   .anillo { position: absolute; width: 112px; height: 112px; border-radius: 50%; border: 4px solid var(--verde-marca); animation: anillo 0.9s ease-out forwards; }
 
   .estado { flex: none; display: flex; flex-direction: column; align-items: center; gap: 10px; min-height: 120px; justify-content: flex-end; }
-  .grande { margin: 0; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 1.4rem; font-weight: 800; text-align: center; }
+  .grande { margin: 0; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 1.4rem; font-weight: 700; text-align: center; }
   .mal { color: var(--alerta); font-size: 1.15rem; }
   .cuenta { width: 100%; display: flex; align-items: center; gap: 12px; }
-  .numero { font-size: 3.4rem; font-weight: 800; line-height: 1; letter-spacing: -0.04em; color: var(--azul); min-width: 1.4em; }
-  .unidad { font-size: 1.4rem; font-weight: 800; color: var(--azul); margin-left: -8px; align-self: flex-end; padding-bottom: 6px; }
+  .numero { font-size: 3.4rem; font-weight: 700; line-height: 1; letter-spacing: -0.04em; color: var(--azul); min-width: 1.4em; }
+  .unidad { font-size: 1.4rem; font-weight: 700; color: var(--azul); margin-left: -8px; align-self: flex-end; padding-bottom: 6px; }
   .barra { flex: 1; height: 12px; border-radius: 6px; background: var(--superficie-2); overflow: hidden; }
   .barra span { display: block; height: 100%; border-radius: 6px; background: linear-gradient(90deg, var(--i-azul), var(--azul)); transition: width 0.4s linear; }
   .ancho { width: 100%; }

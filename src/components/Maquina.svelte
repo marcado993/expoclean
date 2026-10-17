@@ -45,7 +45,7 @@
     padding: 28px 16px; border: 0; border-radius: var(--radio-tarjeta); cursor: pointer; background: var(--t-azul); color: var(--azul);
   }
   .grande.lista { background: var(--t-verde); color: var(--verde-oscuro); cursor: default; }
-  .grande strong { font-size: 1.3rem; font-weight: 800; color: var(--tinta); }
+  .grande strong { font-size: 1.3rem; font-weight: 700; color: var(--tinta); }
   .grande small { color: var(--alerta); font-weight: 600; text-align: center; }
   .grande .icono { position: relative; z-index: 1; display: grid; place-items: center; width: 84px; height: 84px; border-radius: 50%; background: var(--blanco); }
   .onda { position: absolute; top: 28px; left: 50%; width: 84px; height: 84px; margin-left: -42px; border-radius: 50%; background: currentColor; opacity: 0; }
@@ -55,7 +55,7 @@
     width: 100%; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 10px 14px; border: 0; cursor: pointer;
     border-radius: var(--radio-tarjeta); background: var(--azul); color: #fff; text-align: left;
   }
-  .fila strong { font-size: 1.1rem; font-weight: 800; }
+  .fila strong { font-size: 1.1rem; font-weight: 700; }
   .fila small { width: 100%; font-weight: 600; }
   .f-icono { position: relative; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: rgb(255 255 255 / 0.18); }
   .onda.chica { top: 0; left: 0; width: 44px; height: 44px; margin: 0; background: #fff; animation: onda 1.8s ease-out infinite; }

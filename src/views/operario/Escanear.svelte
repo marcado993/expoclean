@@ -105,7 +105,7 @@
   .foto input { position: absolute; opacity: 0; width: 0; height: 0; }
   .foto img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
   .foto-vacia { display: flex; flex-direction: column; align-items: center; gap: 6px; color: var(--tinta-suave); font-weight: 700; }
-  .m2 { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); padding: 8px 14px; border-radius: 10px; background: var(--blanco); font-weight: 800; font-size: 1.1rem; box-shadow: var(--sombra); }
+  .m2 { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); padding: 8px 14px; border-radius: 10px; background: var(--blanco); font-weight: 700; font-size: 1.1rem; box-shadow: var(--sombra); }
   .foto:not(.con-foto) .m2 { top: auto; bottom: 10px; transform: translateX(-50%); }
 
   .zonas { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-wrap: wrap; align-content: flex-start; gap: 8px; }
@@ -119,11 +119,11 @@
   }
   .z-texto { flex: 1; min-width: 0; display: flex; flex-direction: column; color: var(--tinta); }
   .z-texto small { font-size: 0.8rem; color: var(--tinta-suave); }
-  .z-texto strong { font-size: 1.15rem; font-weight: 800; }
+  .z-texto strong { font-size: 1.15rem; font-weight: 700; }
   .z-m2 { color: var(--tinta-suave); font-weight: 600; }
   .cambiar { font-size: 0.85rem; font-weight: 700; }
 
-  .sub { flex: none; margin: 2px 0 0; font-weight: 800; font-size: 1rem; }
+  .sub { flex: none; margin: 2px 0 0; font-weight: 700; font-size: 1rem; }
   .tipos { flex: none; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
   .tipo {
     height: 74px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer;
@@ -137,13 +137,13 @@
   .cifra, .total { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--radio); }
   .cifra span, .total span { display: flex; flex-direction: column; }
   .cifra small, .total small { font-size: 0.82rem; color: var(--tinta-suave); }
-  .cifra strong { font-size: 1.5rem; font-weight: 800; line-height: 1.1; }
+  .cifra strong { font-size: 1.5rem; font-weight: 700; line-height: 1.1; }
   .rosa { background: var(--t-rosa); color: var(--i-rosa); }
   .azul { background: var(--t-azul); color: var(--i-azul); }
   .rosa strong { color: #B8285A; }
   .azul strong { color: var(--azul-oscuro); }
   .total { flex: none; justify-content: center; background: var(--t-azul); color: var(--i-azul); }
-  .total strong { font-size: 1.3rem; font-weight: 800; color: var(--tinta); }
+  .total strong { font-size: 1.3rem; font-weight: 700; color: var(--tinta); }
   .falta { flex: none; margin: 0; padding: 12px; border-radius: var(--radio); background: var(--t-rojo); color: #8A1F1F; font-weight: 600; }
 
   .continuar { flex: none; width: 100%; height: 56px; margin-top: auto; }

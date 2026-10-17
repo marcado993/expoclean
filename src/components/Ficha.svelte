@@ -31,7 +31,7 @@
   .fila { display: flex; justify-content: space-between; gap: 8px; padding: 1.5px 0; border-bottom: 1px solid #000; }
   .fila:last-of-type { border-bottom: 0; }
   .fila span:last-child { font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
-  .fuerte { font-weight: 800; font-size: 0.8rem; }
+  .fuerte { font-weight: 700; font-size: 0.8rem; }
   .sangria { padding-left: 10px; }
   .pie { margin: 2px 0 0; font-size: 0.62rem; }
 </style>

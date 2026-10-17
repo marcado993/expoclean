@@ -13,7 +13,7 @@
     <rect x="20" y="50" width="30" height="30" fill="#1E6FD9" />
     <rect x="50" y="50" width="30" height="30" fill="#FFFFFF" />
   </g>
-  <g font-family="Overpass, sans-serif" font-weight="800" text-anchor="middle" dominant-baseline="central">
+  <g font-family="Lexend, sans-serif" font-weight="700" text-anchor="middle" dominant-baseline="central">
     <text x="50" y="22" font-size="19" fill="#fff">{fuego}</text>
     <text x="28" y="50" font-size="19" fill="#fff">{salud}</text>
     <text x="72" y="50" font-size="19" fill="#0F1E3A">{reac}</text>

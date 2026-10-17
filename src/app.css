@@ -41,7 +41,7 @@
   --radio: 12px;
   --radio-tarjeta: 16px;
   --sombra: 0 1px 2px rgb(15 30 58 / 0.05), 0 4px 16px rgb(15 30 58 / 0.06);
-  --fuente: 'Overpass', 'Segoe UI', system-ui, sans-serif;
+  --fuente: 'Lexend', 'Segoe UI', system-ui, sans-serif;
   color-scheme: light;
 }
 * { box-sizing: border-box; }
@@ -74,7 +74,7 @@ button, input, select { font: inherit; color: inherit; }
 }
 
 /* Encabezado de cada pantalla: título grande + una línea de ayuda. */
-.titulo { margin: 0; font-size: 1.6rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15; color: var(--tinta); }
+.titulo { margin: 0; font-size: 1.6rem; font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; color: var(--tinta); }
 .bajada { margin: 4px 0 0; font-size: 1rem; color: var(--tinta-suave); }
 
 @media (prefers-reduced-motion: reduce) {

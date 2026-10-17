@@ -224,7 +224,7 @@
             <g class="cuarto" role="button" tabindex="0" aria-label="Editar {a.nombre}"
               onclick={() => modo === 'ver' && abrir(a)} onkeydown={(e) => e.key === 'Enter' && abrir(a)}>
               <rect x={a.croquis.x} y={a.croquis.y} width={a.croquis.w} height={a.croquis.h} fill={k.orbe} fill-opacity="0.18" stroke={k.orbe} stroke-width={c.ancho / 250} rx={c.ancho / 200} />
-              <text x={a.croquis.x + a.croquis.w / 2} y={a.croquis.y + a.croquis.h / 2} text-anchor="middle" font-size={c.ancho / 36} font-weight="800" fill={k.orbe}>{a.nombre}</text>
+              <text x={a.croquis.x + a.croquis.w / 2} y={a.croquis.y + a.croquis.h / 2} text-anchor="middle" font-size={c.ancho / 36} font-weight="700" fill={k.orbe}>{a.nombre}</text>
               <text x={a.croquis.x + a.croquis.w / 2} y={a.croquis.y + a.croquis.h / 2 + c.ancho / 30} text-anchor="middle" font-size={c.ancho / 46} fill="#33413a">{a.area_m2} m²</text>
             </g>
           {/each}
@@ -235,7 +235,7 @@
               <rect x={Math.min(trazo.x1, trazo.x2)} y={Math.min(trazo.y1, trazo.y2)} width={Math.abs(trazo.x2 - trazo.x1)} height={Math.abs(trazo.y2 - trazo.y1)}
                 fill="#22985A" fill-opacity="0.2" stroke="#1A7A49" stroke-width={c.ancho / 250} stroke-dasharray="{c.ancho / 80} {c.ancho / 120}" />
               {#if c.mpp}
-                <text x={(trazo.x1 + trazo.x2) / 2} y={(trazo.y1 + trazo.y2) / 2} text-anchor="middle" font-size={c.ancho / 30} font-weight="800" fill="#0B3D2A">
+                <text x={(trazo.x1 + trazo.x2) / 2} y={(trazo.y1 + trazo.y2) / 2} text-anchor="middle" font-size={c.ancho / 30} font-weight="700" fill="#0B3D2A">
                   {Math.round(Math.abs(trazo.x2 - trazo.x1) * Math.abs(trazo.y2 - trazo.y1) * c.mpp ** 2)} m²
                 </text>
               {/if}
@@ -383,7 +383,7 @@
     border: 0; border-bottom: 1px solid var(--linea); background: none; cursor: pointer; text-align: left;
   }
   .dato { position: relative; flex: 1; min-width: 0; display: flex; flex-direction: column; }
-  .dato strong { font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .dato strong { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .dato span { font-size: 0.82rem; color: var(--tinta-suave); }
   .azulejo {
     flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 10px;
@@ -420,7 +420,7 @@
   }
   .hoja.chica { inset: auto 0 0 0; container-type: normal; }
   .hoja-cabeza { flex: none; display: flex; align-items: center; justify-content: space-between; }
-  h2 { margin: 0; font-size: 1.35rem; font-weight: 800; letter-spacing: -0.015em; color: var(--tinta); }
+  h2 { margin: 0; font-size: 1.35rem; font-weight: 700; letter-spacing: -0.015em; color: var(--tinta); }
   .cerrar { width: 40px; height: 40px; border: 0; border-radius: 10px; background: var(--verde-50); display: grid; place-items: center; cursor: pointer; }
 
   .describir { flex: none; display: flex; align-items: center; gap: 6px; padding: 4px 4px 4px 12px; border-radius: 12px; background: var(--verde-50); border: 1.5px dashed #a9cdb8; }

@@ -187,7 +187,7 @@
   .k-icono.azul { background: var(--t-azul); color: var(--i-azul); }
   .k-icono.rojo { background: var(--blanco); color: var(--alerta); }
   .kpi small { font-size: 0.82rem; color: var(--tinta-suave); }
-  .kpi strong { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.02em; }
+  .kpi strong { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.02em; }
   .rojo-txt { color: var(--alerta) !important; }
   .progreso { height: 6px; margin-top: 6px; border-radius: 3px; background: var(--superficie-2); overflow: hidden; }
   .progreso span { display: block; height: 100%; background: var(--verde-marca); }
@@ -197,7 +197,7 @@
   .enlace { font-size: 0.85rem; font-weight: 700; color: var(--alerta); text-decoration: underline; }
 
   .seccion { display: flex; align-items: baseline; justify-content: space-between; margin-top: 6px; }
-  h2 { margin: 0; font-size: 1.2rem; font-weight: 800; letter-spacing: -0.015em; }
+  h2 { margin: 0; font-size: 1.2rem; font-weight: 700; letter-spacing: -0.015em; }
   .ver { border: 0; background: none; color: var(--azul); font-weight: 700; cursor: pointer; }
   .tabla { width: 100%; border-collapse: collapse; font-size: 0.8rem; table-layout: fixed; }
   .tabla th { padding: 8px 4px; text-align: left; font-weight: 600; color: var(--tinta-suave); background: var(--superficie-2); }
@@ -209,7 +209,7 @@
 
   .accesos { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px; }
   .acceso { display: flex; flex-direction: column; gap: 6px; padding: 14px; border-radius: var(--radio-tarjeta); background: var(--t-azul); color: var(--azul); text-decoration: none; }
-  .acceso strong { font-size: 0.95rem; font-weight: 800; color: var(--tinta); }
+  .acceso strong { font-size: 0.95rem; font-weight: 700; color: var(--tinta); }
   .acceso span { font-size: 0.82rem; color: var(--tinta-suave); }
 
   .explica { margin: 0; font-size: 0.9rem; color: var(--tinta-suave); }
@@ -218,21 +218,21 @@
   .fila:last-child { border-bottom: 0; }
   .cuadro { flex: none; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 9px; }
   .f-texto { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-  .f-texto strong { font-weight: 800; }
+  .f-texto strong { font-weight: 700; }
   .f-texto small { font-size: 0.8rem; color: var(--tinta-suave); }
-  .f-valor { font-weight: 800; }
+  .f-valor { font-weight: 700; }
   .comparada { position: relative; height: 8px; margin-top: 4px; border-radius: 4px; background: var(--superficie-2); }
   .comparada span { display: block; height: 100%; border-radius: 4px; background: var(--azul); }
   .comparada span.mucho { background: var(--alerta); }
   .comparada span.poco { background: var(--amarillo); }
   .comparada::after { content: ''; position: absolute; top: -3px; bottom: -3px; left: var(--prom); width: 2px; background: var(--tinta); }
-  .veredicto { flex: none; padding: 4px 10px; border-radius: 999px; font-size: 0.82rem; font-weight: 800; background: var(--superficie-2); color: var(--tinta-suave); }
+  .veredicto { flex: none; padding: 4px 10px; border-radius: 999px; font-size: 0.82rem; font-weight: 700; background: var(--superficie-2); color: var(--tinta-suave); }
   .veredicto.mucho { background: var(--t-rojo); color: var(--alerta); }
   .veredicto.poco { background: #FFF4D6; color: #7A5A00; }
   .alertas { border: 0; gap: 8px; }
   .alerta { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: var(--radio); background: var(--t-rojo); color: var(--alerta); }
   .alerta span { flex: 1; color: var(--tinta); }
-  .alerta a { font-weight: 800; color: var(--azul); }
+  .alerta a { font-weight: 700; color: var(--azul); }
   .alerta.amarilla { background: #FFF4D6; color: #7A5A00; }
   .vacio { margin: 0; padding: 14px; color: var(--tinta-suave); }
 </style>

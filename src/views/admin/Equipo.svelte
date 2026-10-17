@@ -80,7 +80,7 @@
   .maquina.ok { border-left-color: var(--verde-marca); }
   .luz { flex: none; width: 14px; height: 14px; border-radius: 50%; background: var(--alerta); }
   .ok .luz { background: var(--verde-marca); }
-  h2 { margin: 0; font-size: 1.3rem; font-weight: 800; letter-spacing: -0.015em; }
+  h2 { margin: 0; font-size: 1.3rem; font-weight: 700; letter-spacing: -0.015em; }
   .m-texto p { margin: 2px 0 0; color: var(--tinta-suave); font-size: 0.95rem; }
   .probar { flex: none; width: 100%; }
   .prueba { flex: none; margin: 0; font-weight: 700; color: var(--tinta-suave); }
@@ -92,7 +92,7 @@
   .error { margin: 0; color: var(--alerta); font-weight: 700; }
   .filas { display: flex; flex-direction: column; background: var(--blanco); border: 1px solid var(--linea); border-radius: 12px; }
   .fila { display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 0 6px 0 14px; border-bottom: 1px solid var(--linea); }
-  .o-nombre { flex: 1; font-weight: 800; }
+  .o-nombre { flex: 1; font-weight: 700; }
   .o-dato { font-size: 0.85rem; color: var(--tinta-suave); font-weight: 600; }
   .quitar { width: 44px; height: 44px; display: grid; place-items: center; border: 0; background: none; color: var(--tinta-tenue); cursor: pointer; border-radius: var(--radio); }
   .vacio-txt { margin: 0; padding: 14px; color: var(--tinta-suave); }

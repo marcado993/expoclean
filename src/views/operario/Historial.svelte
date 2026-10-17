@@ -51,7 +51,7 @@
   .kpis { flex: none; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .kpi { display: flex; flex-direction: column; padding: 12px 14px; border-radius: var(--radio-tarjeta); }
   .kpi small { font-size: 0.85rem; color: var(--tinta-suave); }
-  .kpi strong { font-size: 1.7rem; font-weight: 800; line-height: 1.15; }
+  .kpi strong { font-size: 1.7rem; font-weight: 700; line-height: 1.15; }
   .kpi span { font-size: 0.85rem; color: var(--tinta-suave); }
   .verde { background: var(--t-verde); } .morado { background: var(--t-morado); }
   .lista { flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column; border: 1px solid var(--linea); border-radius: var(--radio-tarjeta); }
@@ -59,9 +59,9 @@
   .fila:last-child { border-bottom: 0; }
   .punto { flex: none; width: 12px; height: 12px; border-radius: 50%; }
   .f-texto { flex: 1; min-width: 0; display: flex; flex-direction: column; }
-  .f-texto strong { font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .f-texto strong { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .f-texto small { font-size: 0.8rem; color: var(--tinta-suave); }
-  .f-ml { font-weight: 800; }
+  .f-ml { font-weight: 700; }
   .vacio { margin: 0; padding: 16px; color: var(--tinta-suave); }
   .paginador { flex: none; display: flex; align-items: center; justify-content: space-between; font-weight: 700; color: var(--tinta-suave); }
   .flecha { width: 56px; height: 44px; padding: 0; }

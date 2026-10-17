@@ -36,12 +36,12 @@
 <style>
   .perfil { height: 100%; display: flex; flex-direction: column; gap: 18px; }
   .cabeza { display: flex; align-items: center; gap: 14px; }
-  .avatar { display: grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; background: var(--t-azul); color: var(--azul); font-size: 1.4rem; font-weight: 800; }
+  .avatar { display: grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; background: var(--t-azul); color: var(--azul); font-size: 1.4rem; font-weight: 700; }
   .datos { margin: 0; display: flex; flex-direction: column; border: 1px solid var(--linea); border-radius: var(--radio-tarjeta); }
   .datos div { display: flex; justify-content: space-between; padding: 14px 16px; border-bottom: 1px solid var(--linea); }
   .datos div:last-child { border-bottom: 0; }
   dt { color: var(--tinta-suave); }
-  dd { margin: 0; font-weight: 800; color: var(--alerta); }
+  dd { margin: 0; font-weight: 700; color: var(--alerta); }
   dd:not(.ok):first-child, .datos div:not(:last-child) dd { color: var(--tinta); }
   dd.ok { color: var(--verde-oscuro); }
   .salir { width: 100%; margin-top: auto; }

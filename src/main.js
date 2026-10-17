@@ -1,9 +1,10 @@
 import { mount } from 'svelte';
 // Fuentes dentro del proyecto: el kiosko funciona sin internet.
-// Overpass: nace de la señalética de carreteras; se lee de lejos y suena a etiqueta de seguridad.
-import '@fontsource/overpass/400.css';
-import '@fontsource/overpass/600.css';
-import '@fontsource/overpass/800.css';
+// Lexend: diseñada para leer más fácil y rápido (ayuda a quien tiene poca práctica de lectura).
+import '@fontsource/lexend/400.css';
+import '@fontsource/lexend/500.css';
+import '@fontsource/lexend/600.css';
+import '@fontsource/lexend/700.css';
 import '@fontsource/archivo/400.css';
 import '@fontsource/archivo/700.css';
 import '@fontsource/archivo-black/400.css';

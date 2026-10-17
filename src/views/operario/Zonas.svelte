@@ -44,9 +44,9 @@
   .fila:last-child { border-bottom: 0; }
   .cuadro { flex: none; display: grid; place-items: center; width: 38px; height: 38px; border-radius: 10px; }
   .f-texto { flex: 1; min-width: 0; display: flex; flex-direction: column; }
-  .f-texto strong { font-weight: 800; }
+  .f-texto strong { font-weight: 700; }
   .f-texto small { font-size: 0.82rem; color: var(--tinta-suave); }
-  .marca { padding: 2px 8px; border-radius: 999px; background: var(--t-rojo); color: var(--alerta); font-size: 0.75rem; font-weight: 800; }
+  .marca { padding: 2px 8px; border-radius: 999px; background: var(--t-rojo); color: var(--alerta); font-size: 0.75rem; font-weight: 700; }
   .vacio { margin: 0; padding: 16px; color: var(--tinta-suave); }
   .paginador { flex: none; display: flex; align-items: center; justify-content: space-between; font-weight: 700; color: var(--tinta-suave); }
   .flecha { width: 56px; height: 44px; padding: 0; }

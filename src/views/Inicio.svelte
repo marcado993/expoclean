@@ -59,9 +59,9 @@
   .muchos .operario { height: 76px; flex-direction: row; justify-content: flex-start; padding: 0 12px; }
   .inicial {
     display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; flex: none;
-    background: var(--blanco); color: var(--verde-oscuro); font-weight: 800; font-size: 1.05rem;
+    background: var(--blanco); color: var(--verde-oscuro); font-weight: 700; font-size: 1.05rem;
   }
-  .nombre { font-size: 1.1rem; font-weight: 800; line-height: 1.15; text-align: center; }
+  .nombre { font-size: 1.1rem; font-weight: 700; line-height: 1.15; text-align: center; }
   .muchos .nombre { text-align: left; }
   .admin { flex: none; width: 100%; margin-top: auto; }
 </style>

@@ -60,7 +60,7 @@
   .icono { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; background: var(--blanco); color: var(--alerta); }
   .hecha .icono { width: 36px; height: 36px; color: var(--verde-marca); }
   .t-cuerpo { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-  .t-cuerpo strong { font-size: 1.1rem; font-weight: 800; }
+  .t-cuerpo strong { font-size: 1.1rem; font-weight: 700; }
   .t-cuerpo small { color: var(--tinta-suave); }
   .t-botones { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
   .t-botones .boton { height: 46px; font-size: 0.95rem; }
