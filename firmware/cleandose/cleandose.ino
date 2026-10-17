@@ -30,6 +30,7 @@
 #include <BLEDevice.h>
 #include <BLEServer.h>
 #include <BLE2902.h>
+#include <Preferences.h>
 
 #define SERVICIO "7f3a0001-5c2e-4b8a-9f1d-3c6e2a1b4d00"
 #define ORDEN    "7f3a0002-5c2e-4b8a-9f1d-3c6e2a1b4d00"
@@ -37,11 +38,20 @@
 
 const int N = 4;
 const int PIN_BOMBA[N] = {22, 22, 22, 22};   // por ahora todos al mismo relé
-// El foco verde del relé debe estar APAGADO en reposo y prenderse solo al dosificar.
-// true  = el módulo se activa con señal BAJA (LOW): en reposo el pin queda en ALTO.
-// false = el módulo se activa con señal ALTA (HIGH): en reposo el pin queda en BAJO.
-// Si el foco verde queda prendido sin hacer nada, cambia este valor al contrario y vuelve a subir.
-const bool RELE_ACTIVO_BAJO = true;
+// El relé es un INTERRUPTOR: prendido solo durante una dosis, apagado en cualquier otro momento.
+//
+// Tipo de módulo (se guarda en la memoria del ESP32, no hace falta recompilar):
+//   ACTIVO EN BAJO  (el más común, por defecto): en reposo el pin queda SUELTO (colector abierto),
+//                   que apaga el módulo del todo aunque trabaje a 5 V; para prender se conecta a tierra.
+//   ACTIVO EN ALTO: en reposo el pin queda en 0 V y para prender sube a 3.3 V.
+// Si el foco verde queda prendido sin hacer nada, cambia el tipo de una de estas dos formas:
+//   - mantén presionado el botón BOOT del ESP32 durante 3 segundos (el LED parpadea 3 veces = activo en bajo,
+//     2 veces = activo en alto), o
+//   - escribe  p  en el Monitor Serie.
+// Para probar el relé sin la app, escribe  t  en el Monitor Serie: se prende 3 segundos y se apaga.
+const int PIN_BOOT = 0;           // botón BOOT de la placa
+Preferences memoria;
+bool releActivoBajo = true;
 const long SEG_MAX = 120;
 const int PIN_LED = 2;
 const bool DEBUG_BLE = true;      // true = mensajes extra en el Monitor Serie para probar la conexión Bluetooth
@@ -62,8 +72,39 @@ unsigned long ultimoLatido = 0;   // para el mensaje de depuración cada 5 s
 unsigned long ultimoRepaso = 0;   // última vez que se aseguró el relé apagado
 int conexiones = 0;               // cuántas veces se conectó un celular desde que arrancó
 
+void configurarPines() {
+  for (int i = 0; i < N; i++) {
+    if (releActivoBajo) {
+      pinMode(PIN_BOMBA[i], OUTPUT_OPEN_DRAIN);   // HIGH = suelto (apagado), LOW = a tierra (prendido)
+      digitalWrite(PIN_BOMBA[i], HIGH);
+    } else {
+      pinMode(PIN_BOMBA[i], OUTPUT);
+      digitalWrite(PIN_BOMBA[i], LOW);
+    }
+  }
+}
+
 void bomba(int i, bool prendida) {
-  digitalWrite(PIN_BOMBA[i], prendida == RELE_ACTIVO_BAJO ? LOW : HIGH);
+  bool nivelPrendido = releActivoBajo ? LOW : HIGH;
+  digitalWrite(PIN_BOMBA[i], prendida ? nivelPrendido : !nivelPrendido);
+}
+
+void parpadearLed(int veces, int ms) {
+  for (int i = 0; i < veces; i++) {
+    digitalWrite(PIN_LED, HIGH); delay(ms);
+    digitalWrite(PIN_LED, LOW);  delay(ms);
+  }
+}
+
+void cambiarTipoRele() {
+  releActivoBajo = !releActivoBajo;
+  memoria.begin("cleandose", false);
+  memoria.putBool("bajo", releActivoBajo);
+  memoria.end();
+  configurarPines();
+  Serial.print("[CONFIG] Tipo de rele: ");
+  Serial.println(releActivoBajo ? "ACTIVO EN BAJO (pin suelto en reposo)" : "ACTIVO EN ALTO (pin en 0 V en reposo)");
+  parpadearLed(releActivoBajo ? 3 : 2, 300);
 }
 
 void enviar(const String& s) {
@@ -151,16 +192,17 @@ void procesar(const String& o) {
 
 void setup() {
   Serial.begin(115200);
-  for (int i = 0; i < N; i++) {
-    bomba(i, false);                    // antes de pinMode: no hace clic al arrancar
-    pinMode(PIN_BOMBA[i], OUTPUT);
-  }
+  memoria.begin("cleandose", false);
+  releActivoBajo = memoria.getBool("bajo", true);
+  memoria.end();
+  configurarPines();                    // relé apagado desde el primer instante
   pinMode(PIN_LED, OUTPUT);
+  pinMode(PIN_BOOT, INPUT_PULLUP);
   delay(300);
   Serial.println();
-  Serial.print("[INICIO] CleanDose arrancando. Rele apagado (pin 22 en ");
-  Serial.print(RELE_ACTIVO_BAJO ? "ALTO" : "BAJO");
-  Serial.println("). El foco verde debe estar apagado.");
+  Serial.print("[INICIO] CleanDose arrancando. Rele apagado, tipo: ");
+  Serial.println(releActivoBajo ? "ACTIVO EN BAJO (pin suelto en reposo)" : "ACTIVO EN ALTO (pin en 0 V en reposo)");
+  Serial.println("[INICIO] El foco verde debe estar apagado. Si no, mantén BOOT 3 s o escribe p. Escribe t para probar el rele 3 s.");
 
   BLEDevice::init("CleanDose");
   if (DEBUG_BLE) {
@@ -216,6 +258,33 @@ void loop() {
       Serial.println("). Esperando ordenes.");
     } else {
       Serial.println("[DEBUG] Anunciando como 'CleanDose', esperando que un celular se conecte...");
+    }
+  }
+
+  // Botón BOOT mantenido 3 s: cambia el tipo de relé.
+  static unsigned long botonDesde = 0;
+  static bool botonUsado = false;
+  if (digitalRead(PIN_BOOT) != LOW) {
+    botonDesde = 0;
+    botonUsado = false;
+  } else if (!botonUsado) {
+    if (botonDesde == 0) botonDesde = millis();
+    else if (millis() - botonDesde >= 3000 && activo < 0) {
+      cambiarTipoRele();
+      botonUsado = true;
+    }
+  }
+
+  // Comandos de prueba por el Monitor Serie: p = cambiar tipo de relé, t = probar el relé 3 s.
+  while (Serial.available()) {
+    char c = Serial.read();
+    if (c == 'p' && activo < 0) cambiarTipoRele();
+    else if (c == 't' && activo < 0) {
+      Serial.println("[PRUEBA] Rele ON 3 s...");
+      bomba(0, true);
+      delay(3000);
+      bomba(0, false);
+      Serial.println("[PRUEBA] Rele OFF");
     }
   }
 
