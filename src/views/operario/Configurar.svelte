@@ -2,9 +2,10 @@
   // Configuración CleanDose: qué producto contiene cada uno de los 4 compartimentos.
   // En la lista, los productos están agrupados por tipo (cloro, desengrasante, aceite…).
   import Icono from '../../components/Icono.svelte';
+  import Rombo from '../../components/Rombo.svelte';
   import { datos, ui, refrescar } from '../../lib/nube.svelte.js';
   import { api } from '../../lib/api.js';
-  import { TIPOS, PRODUCTOS, COLOR_COMPARTIMENTO } from '../../lib/catalogo.js';
+  import { TIPOS, PRODUCTOS, COLOR_COMPARTIMENTO, SEGURIDAD } from '../../lib/catalogo.js';
 
   // Borrador local: se edita aquí y se guarda todo junto.
   let borrador = $state(datos.compartimentos.map((c) => ({ ...c })));
@@ -68,7 +69,11 @@
       <div class="fila">
         <span class="num">{i + 1}</span>
         <span class="punto" style="background:{COLOR_COMPARTIMENTO[i]}"></span>
-        <span class="botella" style="color:{COLOR_COMPARTIMENTO[i]}"><Icono nombre="botella" size={26} trazo={1.8} /></span>
+        {#if c.producto}
+          <Rombo nfpa={SEGURIDAD[c.producto].nfpa} size={36} />
+        {:else}
+          <span class="botella" style="color:{COLOR_COMPARTIMENTO[i]}"><Icono nombre="botella" size={26} trazo={1.8} /></span>
+        {/if}
         <label class="eleccion">
           <span class="e-nombre">{PRODUCTOS[c.producto]?.nombre ?? 'Sin producto'}</span>
           <span class="e-sub">
@@ -91,7 +96,7 @@
     {/each}
   </div>
 
-  <p class="info"><Icono nombre="info" size={22} trazo={2} /> Esta configuración se guarda en el servidor: todos ven lo mismo.</p>
+  <p class="info"><Icono nombre="info" size={22} trazo={2} /> Rombo de seguridad de referencia: confírmalo con la hoja de seguridad del producto.</p>
   {#if error}<p class="error">{error}</p>{:else if mensaje}<p class="ok">{mensaje}</p>{/if}
   <button class="boton guardar" onclick={guardar} disabled={!cambiado || guardando || ui.ocupado}>
     {guardando ? 'Guardando…' : 'Guardar configuración'}

@@ -4,10 +4,16 @@
   import { maquina, conectarMaquina } from '../lib/ble.svelte.js';
   import { tic } from '../lib/movimiento.js';
 
-  let { grande = false } = $props();
+  let { grande = false, fila = false } = $props();
 </script>
 
-{#if grande}
+{#if fila}
+  <button class="fila" class:lista={maquina.conectada} onclick={() => { tic(); conectarMaquina(); }} disabled={maquina.conectando || maquina.conectada}>
+    <span class="f-icono"><span class="onda chica" aria-hidden="true"></span><Icono nombre={maquina.conectando ? 'cargando' : 'bluetooth'} size={26} trazo={2.2} /></span>
+    <strong>{maquina.conectando ? 'Buscando…' : 'Conectar máquina'}</strong>
+    {#if maquina.error}<small>{maquina.error}</small>{/if}
+  </button>
+{:else if grande}
   <button class="grande" class:lista={maquina.conectada} onclick={() => { tic(); conectarMaquina(); }} disabled={maquina.conectando || maquina.conectada}>
     <span class="onda" aria-hidden="true"></span>
     <span class="icono"><Icono nombre={maquina.conectada ? 'bt-conectado' : 'bluetooth'} size={44} trazo={2} /></span>
@@ -45,6 +51,14 @@
   .onda { position: absolute; top: 28px; left: 50%; width: 84px; height: 84px; margin-left: -42px; border-radius: 50%; background: currentColor; opacity: 0; }
   .grande:not(.lista) .onda { animation: onda 1.8s ease-out infinite; }
 
+  .fila {
+    width: 100%; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 10px 14px; border: 0; cursor: pointer;
+    border-radius: var(--radio-tarjeta); background: var(--azul); color: #fff; text-align: left;
+  }
+  .fila strong { font-size: 1.1rem; font-weight: 800; }
+  .fila small { width: 100%; font-weight: 600; }
+  .f-icono { position: relative; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: rgb(255 255 255 / 0.18); }
+  .onda.chica { top: 0; left: 0; width: 44px; height: 44px; margin: 0; background: #fff; animation: onda 1.8s ease-out infinite; }
   @keyframes late { 50% { transform: scale(1.35); } }
   @keyframes gira { to { transform: rotate(360deg); } }
   @keyframes onda { from { transform: scale(1); opacity: 0.35; } to { transform: scale(2.2); opacity: 0; } }

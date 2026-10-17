@@ -92,3 +92,27 @@ export function recomendar(espacio, tipoLimpieza, compartimentos) {
     falta: compartimento ? null : TIPOS[preferidos[0]].nombre,
   };
 }
+
+/**
+ * Seguridad de cada producto (VALORES DE REFERENCIA para productos de limpieza típicos:
+ * confirmar con la hoja de seguridad SDS del proveedor real).
+ *   nfpa: rombo NFPA 704 [salud, inflamabilidad, reactividad, especial] (0–4; especial: 'OX', 'COR' o '')
+ *   ghs:  pictogramas GHS (02 inflamable, 03 comburente, 05 corrosivo, 07 irritante, 09 medio ambiente)
+ *   epp:  equipo de protección para servirlo: guantes, gafas, mascarilla
+ */
+export const SEGURIDAD = {
+  cloro5:     { nfpa: [2, 0, 1, ''],    ghs: ['05', '09'],       epp: ['guantes', 'gafas'] },
+  hipo10:     { nfpa: [3, 0, 1, 'OX'],  ghs: ['05', '09'],       epp: ['guantes', 'gafas', 'mascarilla'] },
+  amonio:     { nfpa: [2, 0, 0, ''],    ghs: ['05', '09'],       epp: ['guantes', 'gafas'] },
+  peroxido:   { nfpa: [2, 0, 1, 'OX'],  ghs: ['03', '05', '07'], epp: ['guantes', 'gafas'] },
+  desengr:    { nfpa: [2, 0, 0, 'COR'], ghs: ['05'],             epp: ['guantes', 'gafas'] },
+  citrico:    { nfpa: [1, 1, 0, ''],    ghs: ['07'],             epp: ['guantes'] },
+  neutro:     { nfpa: [1, 0, 0, ''],    ghs: [],                 epp: ['guantes'] },
+  enzimatico: { nfpa: [1, 0, 0, ''],    ghs: ['07'],             epp: ['guantes'] },
+  vidrios:    { nfpa: [1, 2, 0, ''],    ghs: ['02', '07'],       epp: ['guantes'] },
+  aceite:     { nfpa: [1, 1, 0, ''],    ghs: [],                 epp: ['guantes'] },
+};
+
+export const NOMBRE_GHS = {
+  '02': 'Inflamable', '03': 'Comburente', '05': 'Corrosivo', '07': 'Irritante', '09': 'Daña el medio ambiente',
+};

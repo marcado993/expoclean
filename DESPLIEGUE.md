@@ -7,6 +7,13 @@
 
 El servidor (`server/index.js`) no necesita librerías: solo Node 20 o superior. Sirve la app ya compilada y la API en el mismo puerto.
 
+## Conexión con la máquina: Bluetooth (17 oct 2026)
+
+El ESP32 ya **no usa Wi-Fi**: se conecta por **Bluetooth** con el celular del operario (Chrome en Android; en iPhone no
+funciona el Bluetooth desde el navegador). El celular manda la orden a la bomba por Bluetooth y guarda el registro en el
+servidor con su propio internet; si no hay internet, lo guarda en una cola y lo manda después.
+Sketch: `firmware/cleandose/cleandose.ino`, se sube tal cual (no hay que configurar nada).
+
 ## Instalación actual (16 oct 2026)
 
 **La app que usa la gente: https://expoclean.vercel.app** (Vercel publica solo en cada push a `main`).

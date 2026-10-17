@@ -3,9 +3,9 @@
 Dosificador de productos de limpieza con 4 compartimentos. El operario elige la zona y el tipo de limpieza, la app calcula cuánto producto y agua lleva, y la máquina sirve la dosis exacta. El administrador ve la trazabilidad y manda operarios a limpiar zonas.
 
 ```
- Celulares (app)  ──HTTP──►  Servidor (server/index.js)  ◄──HTTP──  ESP32 (firmware/cleandose)
- operario / admin             guarda todo, sirve la app,             pregunta "¿hay orden?",
-                              avisa al instante                      prende la bomba N segundos
+ ESP32 (firmware/cleandose) ◄──Bluetooth──  Celular del operario (app)  ──HTTPS──►  Servidor (server/index.js)
+ prende la bomba N segundos                 manda la orden y guarda           guarda registros, tareas,
+                                            el registro (cola sin internet)   espacios; avisa al instante
 ```
 
 Instalación en el servidor: **[DESPLIEGUE.md](DESPLIEGUE.md)**.

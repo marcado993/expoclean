@@ -7,6 +7,7 @@
   import Icono from '../../components/Icono.svelte';
   import Recipiente from '../../components/Recipiente.svelte';
   import Maquina from '../../components/Maquina.svelte';
+  import Seguridad from '../../components/Seguridad.svelte';
   import { datos, sesion, ui, espacioPorId } from '../../lib/nube.svelte.js';
   import { api } from '../../lib/api.js';
   import { maquina, dosificarBLE, detener, registrar, NoSePudo } from '../../lib/ble.svelte.js';
@@ -109,6 +110,9 @@
     error: () => 'La máquina no respondió',
   };
   const ml = (x) => (x >= 1000 ? `${x / 1000} L` : `${x} ml`);
+  // Sin scroll: los lugares se reparten el alto disponible (2 columnas; 3 si son muchos).
+  const columnas = $derived(datos.espacios.length > 10 ? 3 : 2);
+  const filas = $derived(Math.max(1, Math.ceil(datos.espacios.length / columnas)));
   const liquido = $derived(receta ? liquidoDe(receta.productoId) : '#BBD9F2');
   const nivel = $derived(fase === 'hecho' ? 0.92 : fase === 'llenando' || fase === 'parado' ? progreso * 0.92 : 0);
 </script>
@@ -118,15 +122,16 @@
     <h1 class="titulo">¿Dónde vas a limpiar?</h1>
 
     {#if !maquina.conectada}
-      <div in:fade={{ duration: dur(200) }}><Maquina grande /></div>
+      <div in:fade={{ duration: dur(200) }}><Maquina fila /></div>
     {/if}
 
-    <div class="lugares" class:apagados={!maquina.conectada}>
+    <div class="lugares" class:apagados={!maquina.conectada} class:tres={columnas === 3}
+      style="grid-template-columns: repeat({columnas}, 1fr); grid-template-rows: repeat({filas}, minmax(0, 1fr))">
       {#each datos.espacios as e, i (e.id)}
         {@const z = ZONAS[zonaDe(e)]}
         <button class="lugar" style="--zc:{z.color}" onclick={() => llenar(e)} disabled={!maquina.conectada}
           in:fly={{ y: 18, delay: dur(i * 35), duration: dur(260) }}>
-          <span class="cuadro" style="background:{z.color}; color:{z.tinta}"><Icono nombre={e.superficie} size={28} trazo={1.9} /></span>
+          <span class="cuadro" style="background:{z.color}; color:{z.tinta}"><Icono nombre={e.superficie} size={24} trazo={1.9} /></span>
           <span class="l-nombre">{e.nombre}</span>
         </button>
       {/each}
@@ -139,6 +144,7 @@
           <span class="chip" style="--cc:{COLOR_COMPARTIMENTO[receta.compartimento - 1]}"><span class="pto"></span>{PRODUCTOS[receta.productoId]?.nombre}</span>
           <span class="chip"><Icono nombre={receta.recipiente} size={16} trazo={2} />{ml(RECIPIENTES[receta.recipiente].capacidad)}</span>
         </span>
+        <Seguridad producto={receta.productoId} />
       {/if}
     </div>
 
@@ -187,10 +193,10 @@
 <style>
   .dosificar { height: 100%; display: flex; flex-direction: column; gap: 14px; }
 
-  .lugares { flex: 1; min-height: 0; overflow-y: auto; display: grid; grid-template-columns: 1fr 1fr; grid-auto-rows: 108px; align-content: start; gap: 12px; padding: 2px 2px 6px; }
+  .lugares { flex: 1; min-height: 0; max-height: 560px; overflow: hidden; display: grid; gap: 10px; padding: 2px; }
   .lugares.apagados { opacity: 0.45; }
   .lugar {
-    position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; padding: 12px;
+    position: relative; overflow: hidden; min-height: 0; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 8px; padding: 8px 12px;
     cursor: pointer; text-align: left; border: 0; border-radius: var(--radio-tarjeta);
     background: color-mix(in srgb, var(--zc) 9%, white); color: var(--tinta);
     box-shadow: 0 1px 0 color-mix(in srgb, var(--zc) 25%, white);
@@ -198,8 +204,10 @@
   }
   .lugar:active:not(:disabled) { transform: scale(0.95); box-shadow: none; }
   .lugar:disabled { cursor: default; }
-  .cuadro { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 14px; }
-  .l-nombre { font-size: 1.05rem; font-weight: 800; line-height: 1.15; }
+  .cuadro { flex: none; display: grid; place-items: center; width: 42px; height: 42px; border-radius: 12px; }
+  .l-nombre { font-size: 1rem; font-weight: 800; line-height: 1.15; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .tres .l-nombre { font-size: 0.88rem; }
+  .tres .cuadro { width: 34px; height: 34px; }
 
   .cabeza { flex: none; display: flex; flex-direction: column; gap: 8px; }
   .chips { display: flex; flex-wrap: wrap; gap: 6px; }

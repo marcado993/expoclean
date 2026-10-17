@@ -61,7 +61,14 @@ import i_bt_conectado from '@tabler/icons/outline/bluetooth-connected.svg?raw';
 import i_parar from '@tabler/icons/outline/player-stop.svg?raw';
 import i_cargando from '@tabler/icons/outline/loader-2.svg?raw';
 
+import i_guantes from '@tabler/icons/outline/hand-stop.svg?raw';
+import i_gafas from '@tabler/icons/outline/eyeglass.svg?raw';
+import i_mascarilla from '@tabler/icons/outline/mask.svg?raw';
+
 export const ICONOS = {
+  'guantes': i_guantes,
+  'gafas': i_gafas,
+  'mascarilla': i_mascarilla,
   'bluetooth': i_bluetooth,
   'sin-bluetooth': i_sin_bluetooth,
   'bt-conectado': i_bt_conectado,
